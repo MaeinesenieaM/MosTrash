@@ -17,10 +17,24 @@ class FPoint:
         self.x = float(x)
         self.y = float(y)
 
+class CPoint:
+    def __init__(self, x, y):
+        self.x = float(x)
+        self.y = float(y)
+
 class Square:
     def __init__(self, point, size):
         self.pos = point
         self.size = float(size)
+
+    def create_rect(self, point):
+        x = 0.0
+        y = 0.0
+
+
+
+    def draw(self, surface, color):
+        pygame.draw.rect(surface, )
 
 def to_cartesian(raster_point):
     x, y = raster_point
