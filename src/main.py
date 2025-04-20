@@ -18,19 +18,18 @@ class CPoint:
         self.x = float(x) % 1.0
         self.y = float(y) % 1.0
 
-#Diferente de um Rect comum, Square é um objeto dinâmico que muda de acorde com seus dados
-#Pode ser até considerado mais caro que um Simples Rect.
+#Diferente de um Rect comum, Square é um objeto dinâmico que muda de acordo com seus dados;
+#pode ser até considerado mais caro que um Simples Rect.
 class Square:
     def __init__(self, point: Point, size):
+        if isinstance(point, CPoint):
+            point = to_raster(point)
         self.pos = point
         self.size = float(size)
 
     #Se from_corner é True o Rect retornado tera seu ponto de origem no centro.
-    def create_rect(self, point: Point, from_corner = False):
-        if isinstance(point, CPoint):
-            point = to_raster(point)
-        x = point.x
-        y = point.y
+    def create_rect(self, from_corner = False):
+        x, y = self.pos
         if not from_corner:
             x = x - self.size / 2
             y = y - self.size / 2
