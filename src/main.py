@@ -1,9 +1,54 @@
 from mostrash import *
 
+class Boneco:
+    def __init__(self, point: Point | CPoint, size: float):
+        if isinstance(point, CPoint):
+            point = point.to_raster()
+
+        self.pos = point
+        self.size = size
+        self.speed = pygame.Vector2(0.0, 0.0)
+        self.acceleration = pygame.Vector2(0.0, 0.0)
+        self.friction = 0.2
+
+    #Atualiza o objeto Dummy de acordo com suas propriedades, como calcular
+    #a posição de acordo com sua velocidade.
+    def update(self):
+        #Atualizamos a posição conforme a velocidade.
+        self.speed += self.acceleration
+        self.pos.x += self.speed.x
+        self.pos.y -= self.speed.y
+
+        #Apartir daqui são os cálculos para desaceleração com forme a fricção do objeto.
+
+        #Aki calculamos a distância dos vetores da velocidade e aceleração,
+        # pense como se eles fossem setas e estamos apenas medindo o quão LONGO
+        # eles são.
+        speed_length = self.speed.length()
+        acceleration_length = self.acceleration.length()
+
+        if speed_length > 0.0:
+            friction_force = self.speed * -self.friction
+            self.speed += friction_force
+            if speed_length < self.friction:
+                self.speed = pygame.Vector2(0.0, 0.0)
+
+        if acceleration_length > 0.0:
+            acceleration_friction = self.acceleration * -(self.friction / 2.0)
+            self.acceleration += acceleration_friction
+            if acceleration_length < self.friction:
+                self.acceleration = pygame.Vector2(0.0, 0.0)
+
+    def get_body(self):
+        return Square(self.pos, self.size)
+
+    def draw(self, surface: pygame.Surface, color: pygame.Color):
+        self.get_body().draw(surface, color)
+
 #A partir daqui é o código da demonstração.
 pygame.init()
 
-window = pygame.display.set_mode((400, 400))
+window = pygame.display.set_mode((600, 600))
 clock = pygame.time.Clock()
 
 running = True
@@ -11,11 +56,28 @@ running = True
 quadrado = Square(Point(0.0, 0.0), 0.0)
 quadrado_mouse = Square(Point(0, 0), 10)
 
-while running:
+boneco = Boneco(CPoint(0.0, 0.0), 20.0)
 
+while running:
+    boneco.update()
+
+    #Checa por eventos.
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        match event.type:
+            case pygame.QUIT: running = False
+
+    keys = pygame.key.get_pressed()
+    get_key = lambda name: pygame.key.key_code(name)
+    get_event = lambda key_id: pygame.event.Event(key_id)
+
+    if keys[get_key("escape")]: pygame.event.post(get_event(pygame.QUIT))
+
+    velocidade = 0.05
+
+    if keys[get_key("w")] | keys[get_key("up")]: boneco.acceleration.y += boneco.friction + 0.05
+    if keys[get_key("s")] | keys[get_key("down")]: boneco.acceleration.y -= boneco.friction + 0.05
+    if keys[get_key("a")] | keys[get_key("left")]: boneco.acceleration.x -= boneco.friction + 0.05
+    if keys[get_key("d")] | keys[get_key("right")]: boneco.acceleration.x += boneco.friction + 0.05
 
     mouse_pos = to_cartesian(pygame.mouse.get_pos())
 
@@ -26,11 +88,13 @@ while running:
 
     window.fill([distance_color, distance_color, distance_color])
 
-    quadrado.size = quadrado.size + 0.5
-    quadrado.draw(pygame.display.get_surface(), pygame.Color(20, 20, 20), from_corner = True)
+    window_surface = pygame.display.get_surface()
 
+    quadrado.size = quadrado.size + 0.5
+    quadrado.draw(window_surface, pygame.Color(20, 20, 20), from_corner = True)
     quadrado_mouse.set_pos(mouse_pos)
-    quadrado_mouse.draw(pygame.display.get_surface(), pygame.Color(198, 20, 20))
+    quadrado_mouse.draw(window_surface, pygame.Color(198, 20, 20))
+    boneco.draw(window_surface, pygame.Color(85, 174, 58))
 
     pygame.display.flip()
     clock.tick(60)

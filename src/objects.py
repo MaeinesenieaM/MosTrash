@@ -13,10 +13,19 @@ class CPoint:
         self.x = ((x + 1) % 2) - 1 #Formula complicada para limitar o valor entre -1,0 e 1,0.
         self.y = ((y + 1) % 2) - 1
 
+    def to_raster(self):
+        x = self.x
+        y = self.y * -1
+
+        window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
+        raster_x = (window_x_center * x) + window_x_center
+        raster_y = (window_y_center * y) + window_y_center
+        return Point(raster_x, raster_y)
+
 #Diferente de um Rect comum, Square é um objeto dinâmico que muda de acordo com seus dados;
 #pode ser até considerado mais caro que um Simples Rect.
 class Square:
-    def __init__(self, point: Point | CPoint, size):
+    def __init__(self, point: Point | CPoint, size: float | int):
         if isinstance(point, CPoint):
             point = to_raster(point)
         self._pos_ = point
