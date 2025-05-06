@@ -1,11 +1,13 @@
+import pygame.mouse
+
 from mostrash import *
 
 class Boneco:
-    def __init__(self, point: Point | CPoint, size: float):
-        if isinstance(point, CPoint):
-            point = point.to_raster()
+    def __init__(self, pos: Position | RPoint | CPoint, size: float):
+        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
+            pos = pos.to_position()
 
-        self.pos = point
+        self.pos = pos
         self.size = size
         self.speed = pygame.Vector2(0.0, 0.0)
         self.acceleration = pygame.Vector2(0.0, 0.0)
@@ -17,7 +19,7 @@ class Boneco:
         #Atualizamos a posição conforme a velocidade.
         self.speed += self.acceleration
         self.pos.x += self.speed.x
-        self.pos.y -= self.speed.y
+        self.pos.y += self.speed.y
 
         #Apartir daqui são os cálculos para desaceleração com forme a fricção do objeto.
 
@@ -48,19 +50,24 @@ class Boneco:
 #A partir daqui é o código da demonstração.
 pygame.init()
 
-window = pygame.display.set_mode((600, 600))
+window = pygame.display.set_mode((600, 600), flags = pygame.RESIZABLE)
 clock = pygame.time.Clock()
 
+camera = Camera(window)
+
+quadrado = Square(CPoint(0.0, 0.0), 0.0)
+quadrado_mouse = Square(Position(0, 0), 10)
+
+boneco = Boneco(Position(0.0, 0.0), 20.0)
+
 running = True
-
-quadrado = Square(Point(0.0, 0.0), 0.0)
-quadrado_mouse = Square(Point(0, 0), 10)
-
-boneco = Boneco(CPoint(0.0, 0.0), 20.0)
-
 while running:
     boneco.update()
+    camera.update()
+    window.fill([0, 0, 0])
+    window_surface = pygame.display.get_surface()
 
+    offset_x, offset_y = camera.get_offset()
     #Checa por eventos.
     for event in pygame.event.get():
         match event.type:
@@ -79,22 +86,25 @@ while running:
     if keys[get_key("a")] | keys[get_key("left")]: boneco.acceleration.x -= boneco.friction + 0.05
     if keys[get_key("d")] | keys[get_key("right")]: boneco.acceleration.x += boneco.friction + 0.05
 
-    mouse_pos = to_cartesian(pygame.mouse.get_pos())
+    mouse_cart_pos = to_cartesian(pygame.mouse.get_pos())
 
-    mouse_x_abs = (mouse_pos.x * mouse_pos.x) ** 0.5
-    mouse_y_abs = (mouse_pos.y * mouse_pos.y) ** 0.5
+    mouse_x_abs = (mouse_cart_pos.x * mouse_cart_pos.x) ** 0.5
+    mouse_y_abs = (mouse_cart_pos.y * mouse_cart_pos.y) ** 0.5
 
     distance_color = 127.0 * (mouse_y_abs + mouse_x_abs)
 
     window.fill([distance_color, distance_color, distance_color])
 
-    window_surface = pygame.display.get_surface()
+    quadrado.size = quadrado.size + 0.2
 
-    quadrado.size = quadrado.size + 0.5
-    quadrado.draw(window_surface, pygame.Color(20, 20, 20), from_corner = True)
-    quadrado_mouse.set_pos(mouse_pos)
-    quadrado_mouse.draw(window_surface, pygame.Color(198, 20, 20))
-    boneco.draw(window_surface, pygame.Color(85, 174, 58))
+    camera.draw_rect(pygame.Color(20, 20, 20), quadrado.create_rect(from_corner = False))
+    camera.draw_rect(pygame.Color(85, 174, 58), boneco.get_body().create_rect())
+    quadrado_mouse.set_pos(pygame.mouse.get_pos())
+    quadrado_mouse.draw(window, pygame.Color(198, 20, 20))
+    #camera.draw_rect(pygame.Color(198, 20, 20), quadrado_mouse.create_rect())
+
+    camera.pos.y += 0.2
+    camera.pos.x += 0.1
 
     pygame.display.flip()
     clock.tick(60)
