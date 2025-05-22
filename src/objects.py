@@ -96,31 +96,3 @@ class Square:
 #            pos = pos.to_position()
 #        self._pos_ = pos
 #
-
-def to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]):
-    import pygame
-    if isinstance(raster_point, tuple):
-        x = float(raster_point[0])
-        y = float(raster_point[1])
-    else:
-        x = raster_point.x
-        y = raster_point.y
-
-    window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
-    cart_x = (x - window_x_center) / window_x_center
-    cart_y = (window_y_center - y) / window_y_center
-    return CPoint(cart_x, cart_y)
-
-def to_raster(caster_point: CPoint | tuple[float, float]):
-    import pygame
-    if isinstance(caster_point, tuple):
-        x = float(caster_point[0])
-        y = float(caster_point[1]) * -1
-    else:
-        x = caster_point.x
-        y = caster_point.y * -1
-
-    window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
-    raster_x = (window_x_center * x) + window_x_center
-    raster_y = (window_y_center * y) + window_y_center
-    return RPoint(raster_x, raster_y)
