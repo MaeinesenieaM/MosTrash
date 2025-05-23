@@ -1,8 +1,9 @@
-def start():
+def start(window):
     import pygame
+    import src.mostrash as mostrash
     class Coisa:
         def __init__(self):
             self.outra_coisa = "coisa"
     Coisa()
-
-    return True or False
+    mostrash.update_input_controller()
+    print("socorro")

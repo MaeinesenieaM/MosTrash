@@ -73,18 +73,18 @@ while running:
         match event.type:
             case pygame.QUIT: running = False
 
-    keys = pygame.key.get_pressed()
+    update_input_controller()
     get_key = lambda name: pygame.key.key_code(name)
     get_event = lambda key_id: pygame.event.Event(key_id)
 
-    if keys[get_key("escape")]: pygame.event.post(get_event(pygame.QUIT))
+    if is_key_pressed("escape"): pygame.event.post(get_event(pygame.QUIT))
 
     velocidade = 0.05
 
-    if keys[get_key("w")] | keys[get_key("up")]: boneco.acceleration.y += boneco.friction + 0.05
-    if keys[get_key("s")] | keys[get_key("down")]: boneco.acceleration.y -= boneco.friction + 0.05
-    if keys[get_key("a")] | keys[get_key("left")]: boneco.acceleration.x -= boneco.friction + 0.05
-    if keys[get_key("d")] | keys[get_key("right")]: boneco.acceleration.x += boneco.friction + 0.05
+    if is_key_pressed("w") | is_key_pressed("up"): boneco.acceleration.y += boneco.friction + 0.05
+    if is_key_pressed("s") | is_key_pressed("down"): boneco.acceleration.y -= boneco.friction + 0.05
+    if is_key_pressed("a") | is_key_pressed("left"): boneco.acceleration.x -= boneco.friction + 0.05
+    if is_key_pressed("d") | is_key_pressed("right"): boneco.acceleration.x += boneco.friction + 0.05
 
     mouse_cart_pos = to_cartesian(pygame.mouse.get_pos())
 

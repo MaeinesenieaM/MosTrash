@@ -1,6 +1,29 @@
 from mostrash import *
 import os
-import importlib
+import importlib.util
+
+def carregar_games():
+    games = {}
+
+    path_main = os.path.dirname(__file__)
+    path_games = os.path.join(path_main, "games")
+
+    #Carrega os scripts de cada minigame.
+    for categoria in os.listdir(path_games):
+        if os.path.isfile(categoria): continue
+        games[categoria] = {}
+        for file in os.listdir(os.path.join(path_games, categoria)):
+            if not file.endswith(".py"): continue
+            path = os.path.join(path_games, categoria, file)
+            name = file[:-3] #Remove .py do nome do arquivo
+
+            spec = importlib.util.spec_from_file_location(file, path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            games[categoria][name] = {"path": path, "module": module}
+
+    return games
 
 #A partir daqui é o código da demonstração.
 pygame.init()
@@ -26,23 +49,9 @@ while running:
     if is_key_pressed("escape"): pygame.event.post(get_event(pygame.QUIT))
 
     #"categorias" so esta aki como exemplo.
-    games = {"categorias": {}}
+    games = carregar_games()
 
-    path_main = os.path.dirname(__file__)
-    path_games = os.path.join(path_main, "games")
-
-    #Carrega os scripts de cada minigame.
-    for categoria in os.listdir(path_games):
-        if os.path.isfile(categoria): continue
-        games[categoria] = {}
-        for file in os.listdir(os.path.join(path_games, categoria)):
-            if not file.endswith(".py"): continue
-            path = os.path.join(path_games, categoria, file)
-
-            game = {"name": file[:-3]}
-            games[categoria].update(game)
-
-    print(games)
+    games["yes"]["socorro"]["module"].start(window)
 
     pygame.display.flip()
     clock.tick(60)
