@@ -40,16 +40,12 @@ class Camera:
 
 class Input:
     def __init__(self):
-        self._keyboard_keys = []
-
-    @property
-    def get_keyboard_input(self):
-        return self._keyboard_keys
+        self.keyboard_keys = []
 
 _input_controller = Input()
 
 def update_input_controller():
-    _input_controller._keyboard_keys = pygame.key.get_pressed()
+    _input_controller.keyboard_keys = pygame.key.get_pressed()
 
 #Recebe a chave de um input, como o do teclado, por exemplo.
 def get_key(key: str) -> int:
@@ -60,7 +56,7 @@ def get_event(event_id: int) -> pygame.event.Event:
     return pygame.event.Event(event_id)
 
 def is_key_pressed(key: str) -> bool:
-    return _input_controller.get_keyboard_input[get_key(key)]
+    return _input_controller.keyboard_keys[get_key(key)]
 
 def to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
     import pygame

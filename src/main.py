@@ -25,17 +25,22 @@ while running:
 
     if is_key_pressed("escape"): pygame.event.post(get_event(pygame.QUIT))
 
-    games = {"categorias": []}
+    #"categorias" so esta aki como exemplo.
+    games = {"categorias": {}}
 
     path_main = os.path.dirname(__file__)
     path_games = os.path.join(path_main, "games")
 
+    #Carrega os scripts de cada minigame.
     for categoria in os.listdir(path_games):
         if os.path.isfile(categoria): continue
-        games[categoria] = []
+        games[categoria] = {}
         for file in os.listdir(os.path.join(path_games, categoria)):
             if not file.endswith(".py"): continue
-            games[categoria].append(file)
+            path = os.path.join(path_games, categoria, file)
+
+            game = {"name": file[:-3]}
+            games[categoria].update(game)
 
     print(games)
 
