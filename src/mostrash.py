@@ -1,5 +1,36 @@
 import pygame
+
+import os
+import importlib.util
+
 from objects import *
+
+class MosTrash:
+    def __init__(self, width: int, height: int):
+        if not pygame.get_init(): pygame.init()
+        self._window = pygame.display.set_mode((width, height), flags = pygame.RESIZABLE)
+        self._clock = pygame.time.Clock()
+        self._camera = Camera(self._window)
+
+    def get_window(self):
+        return self._window
+
+    def get_clock(self):
+        return self._clock
+
+    def get_camera(self):
+        return self._camera
+
+class Input:
+    def __init__(self):
+        self.keyboard_keys = []
+
+mostrash = None
+_input_controller = Input()
+
+def init(width, height):
+    global mostrash
+    mostrash = MosTrash(width, height)
 
 #Aki é o arquivo principal onde podemos conectar modulos e criar outras funções globais.
 class World:
@@ -38,11 +69,23 @@ class Camera:
         height_center = self.height / 2
         return -self.pos.x + width_center, self.pos.y + height_center
 
-class Input:
-    def __init__(self):
-        self.keyboard_keys = []
+def get_window():
+    global mostrash
+    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(x, y)")
 
-_input_controller = Input()
+    return MosTrash.get_window(self = mostrash)
+
+def get_clock():
+    global mostrash
+    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(x, y)")
+
+    return MosTrash.get_clock(self = mostrash)
+
+def get_camera():
+    global mostrash
+    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(x, y)")
+
+    return MosTrash.get_camera(self = mostrash)
 
 def update_input_controller():
     _input_controller.keyboard_keys = pygame.key.get_pressed()
@@ -85,3 +128,26 @@ def to_raster(caster_point: CPoint | tuple[float, float]) -> RPoint:
     raster_x = (window_x_center * x) + window_x_center
     raster_y = (window_y_center * y) + window_y_center
     return RPoint(raster_x, raster_y)
+
+def carregar_games():
+    games = {}
+
+    path_main = os.path.dirname(__file__)
+    path_games = os.path.join(path_main, "games")
+
+    #Carrega os scripts de cada minigame.
+    for categoria in os.listdir(path_games):
+        if os.path.isfile(categoria): continue
+        games[categoria] = {}
+        for file in os.listdir(os.path.join(path_games, categoria)):
+            if not file.endswith(".py"): continue
+            path = os.path.join(path_games, categoria, file)
+            name = file[:-3] #Remove .py do nome do arquivo
+
+            spec = importlib.util.spec_from_file_location(file, path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            games[categoria][name] = {"path": path, "module": module}
+
+    return games

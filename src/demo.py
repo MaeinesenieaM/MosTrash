@@ -1,6 +1,8 @@
 import pygame.mouse
+import pygame
 
-from mostrash import *
+import mostrash
+from mostrash import Position, RPoint, CPoint, Square
 
 class Boneco:
     def __init__(self, pos: Position | RPoint | CPoint, size: float):
@@ -48,12 +50,11 @@ class Boneco:
         self.get_body().draw(surface, color)
 
 #A partir daqui é o código da demonstração.
-pygame.init()
+mostrash.init(600, 600)
 
-window = pygame.display.set_mode((600, 600), flags = pygame.RESIZABLE)
-clock = pygame.time.Clock()
-
-camera = Camera(window)
+window = mostrash.get_window()
+clock = mostrash.get_clock()
+camera = mostrash.get_camera()
 
 quadrado = Square(CPoint(0.0, 0.0), 0.0)
 quadrado_mouse = Square(Position(0, 0), 10)
@@ -73,20 +74,20 @@ while running:
         match event.type:
             case pygame.QUIT: running = False
 
-    update_input_controller()
+    mostrash.update_input_controller()
     get_key = lambda name: pygame.key.key_code(name)
     get_event = lambda key_id: pygame.event.Event(key_id)
 
-    if is_key_pressed("escape"): pygame.event.post(get_event(pygame.QUIT))
+    if mostrash.is_key_pressed("escape"): pygame.event.post(get_event(pygame.QUIT))
 
     velocidade = 0.05
 
-    if is_key_pressed("w") | is_key_pressed("up"): boneco.acceleration.y += boneco.friction + 0.05
-    if is_key_pressed("s") | is_key_pressed("down"): boneco.acceleration.y -= boneco.friction + 0.05
-    if is_key_pressed("a") | is_key_pressed("left"): boneco.acceleration.x -= boneco.friction + 0.05
-    if is_key_pressed("d") | is_key_pressed("right"): boneco.acceleration.x += boneco.friction + 0.05
+    if mostrash.is_key_pressed("w") | mostrash.is_key_pressed("up"): boneco.acceleration.y += boneco.friction + 0.05
+    if mostrash.is_key_pressed("s") | mostrash.is_key_pressed("down"): boneco.acceleration.y -= boneco.friction + 0.05
+    if mostrash.is_key_pressed("a") | mostrash.is_key_pressed("left"): boneco.acceleration.x -= boneco.friction + 0.05
+    if mostrash.is_key_pressed("d") | mostrash.is_key_pressed("right"): boneco.acceleration.x += boneco.friction + 0.05
 
-    mouse_cart_pos = to_cartesian(pygame.mouse.get_pos())
+    mouse_cart_pos = mostrash.to_cartesian(pygame.mouse.get_pos())
 
     mouse_x_abs = (mouse_cart_pos.x * mouse_cart_pos.x) ** 0.5
     mouse_y_abs = (mouse_cart_pos.y * mouse_cart_pos.y) ** 0.5
