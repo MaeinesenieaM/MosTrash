@@ -6,6 +6,10 @@ import importlib.util
 from objects import *
 from points import *
 
+class Input:
+    def __init__(self):
+        self.keyboard_keys = []
+
 class Context:
     def __init__(self, width: int, height: int):
         if not pygame.get_init(): pygame.init()
@@ -64,10 +68,6 @@ class Camera:
         for body in bodies:
             self.draw_rect(body[0], body[1])
 
-class Input:
-    def __init__(self):
-        self.keyboard_keys = []
-
 class Games:
     def __init__(self):
         self.games = carregar_games()
@@ -116,6 +116,9 @@ def carregar_games():
 def update_input_controller():
     _input_controller.keyboard_keys = pygame.key.get_pressed()
 
+def is_key_pressed(key: str) -> bool:
+    return _input_controller.keyboard_keys[get_key(key)]
+
 #Recebe a chave de um input, como o do teclado, por exemplo.
 def get_key(key: str) -> int:
     return pygame.key.key_code(key)
@@ -123,9 +126,6 @@ def get_key(key: str) -> int:
 #Recebe uma classe de Event que pode ser usada para ser enviada com o pygame.event.post()
 def get_event(event_id: int) -> pygame.event.Event:
     return pygame.event.Event(event_id)
-
-def is_key_pressed(key: str) -> bool:
-    return _input_controller.keyboard_keys[get_key(key)]
 
 def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
     import pygame
