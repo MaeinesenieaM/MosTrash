@@ -1,4 +1,4 @@
-def start(window):
+def start(context: mostrash.Context):
     import pygame
     import src.mostrash as mostrash
     class Coisa:

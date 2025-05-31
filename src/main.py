@@ -6,14 +6,14 @@ from src.objects import Position
 #A partir daqui é o código da demonstração.
 
 #Inicia mostrash
-mostrash.init(600, 600)
+context = mostrash.init(600, 600)
 
-window = mostrash.get_window()
-clock = mostrash.get_clock()
-camera = mostrash.get_camera()
+window = context.get_window()
+clock = context.get_clock()
+camera = context.get_camera()
 
-button = mostrash.Button(Position(0, 0), 20, lambda: print("what"))
-games = mostrash.carregar_games()
+games = mostrash.Games()
+button = mostrash.Button(Position(0, 0), 20, lambda: games.get_game("teste", "blue")(context))
 
 running = True
 while running:
@@ -27,9 +27,7 @@ while running:
 
     if button.has_point(mouse_pos): button.run_callback()
 
-
-
-    print(f"{mouse_pos.x} : {mouse_pos.y}")
+    #print(f"{mouse_pos.x} : {mouse_pos.y}")
 
     offset_x, offset_y = camera.get_offset()
     #Checa por eventos.

@@ -6,7 +6,7 @@ import importlib.util
 from objects import *
 from points import *
 
-class MosTrash:
+class Context:
     def __init__(self, width: int, height: int):
         if not pygame.get_init(): pygame.init()
         self._window = pygame.display.set_mode((width, height), flags = pygame.RESIZABLE)
@@ -68,32 +68,50 @@ class Input:
     def __init__(self):
         self.keyboard_keys = []
 
-mostrash: MosTrash | None = None
+class Games:
+    def __init__(self):
+        self.games = carregar_games()
+
+    def get_game(self, category: str, game: str):
+        return self.games[category][game]["module"].start
+
 _input_controller = Input()
 
-def init(width, height):
-    global mostrash
-    mostrash = MosTrash(width, height)
+def init(width: int, height: int):
+    return Context(width, height)
 
-def check_mostrash():
-    global mostrash
-    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(width, height)")
-    if not isinstance(mostrash, MosTrash): raise RuntimeError("ERRO: MOSTRASH DEFINIDO INCORRETAMENTE!")
+#def check_context():
+#    global context
+#    if context is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(width, height)")
+#    if not isinstance(context, Context): raise RuntimeError("ERRO: MOSTRASH DEFINIDO INCORRETAMENTE!")
+#
+#def get_context():
+#    check_context()
+#    global context
+#    return context
 
-def get_window():
-    global mostrash
-    check_mostrash()
-    return mostrash.get_window()
+def carregar_games():
+    games = {}
 
-def get_clock():
-    global mostrash
-    check_mostrash()
-    return mostrash.get_clock()
+    path_main = os.path.dirname(__file__)
+    path_games = os.path.join(path_main, "games")
 
-def get_camera():
-    global mostrash
-    check_mostrash()
-    return mostrash.get_camera()
+    #Carrega os scripts de cada minigame.
+    for categoria in os.listdir(path_games):
+        if os.path.isfile(categoria): continue
+        games[categoria] = {}
+        for file in os.listdir(os.path.join(path_games, categoria)):
+            if not file.endswith(".py"): continue
+            path = os.path.join(path_games, categoria, file)
+            name = file[:-3] #Remove .py do nome do arquivo
+
+            spec = importlib.util.spec_from_file_location(file, path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+
+            games[categoria][name] = {"path": path, "module": module}
+
+    return games
 
 def update_input_controller():
     _input_controller.keyboard_keys = pygame.key.get_pressed()
@@ -152,26 +170,3 @@ def to_position(point: RPoint | CPoint | tuple[float, float] | tuple[int, int]):
 
     window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
     return Position(point[0] - window_x_center, -point[1] + window_y_center)
-
-def carregar_games():
-    games = {}
-
-    path_main = os.path.dirname(__file__)
-    path_games = os.path.join(path_main, "games")
-
-    #Carrega os scripts de cada minigame.
-    for categoria in os.listdir(path_games):
-        if os.path.isfile(categoria): continue
-        games[categoria] = {}
-        for file in os.listdir(os.path.join(path_games, categoria)):
-            if not file.endswith(".py"): continue
-            path = os.path.join(path_games, categoria, file)
-            name = file[:-3] #Remove .py do nome do arquivo
-
-            spec = importlib.util.spec_from_file_location(file, path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-
-            games[categoria][name] = {"path": path, "module": module}
-
-    return games

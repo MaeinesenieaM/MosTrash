@@ -55,7 +55,7 @@ class Button(Entity):
     from pygame import Color, Rect
     from collections.abc import Callable
 
-    def __init__(self, pos: Position | RPoint | CPoint, size: float | int, callback: Callable[[], None] = None):
+    def __init__(self, pos: Position | RPoint | CPoint, size: float | int, callback: Callable[..., any] = None):
         from collections.abc import Callable
 
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
