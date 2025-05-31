@@ -87,7 +87,7 @@ while running:
     if mostrash.is_key_pressed("a") | mostrash.is_key_pressed("left"): boneco.acceleration.x -= boneco.friction + 0.05
     if mostrash.is_key_pressed("d") | mostrash.is_key_pressed("right"): boneco.acceleration.x += boneco.friction + 0.05
 
-    mouse_cart_pos = mostrash.to_cartesian(pygame.mouse.get_pos())
+    mouse_cart_pos = mostrash.to_position(pygame.mouse.get_pos())
 
     mouse_x_abs = (mouse_cart_pos.x * mouse_cart_pos.x) ** 0.5
     mouse_y_abs = (mouse_cart_pos.y * mouse_cart_pos.y) ** 0.5

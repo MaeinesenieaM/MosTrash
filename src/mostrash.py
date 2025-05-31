@@ -22,17 +22,6 @@ class MosTrash:
     def get_camera(self):
         return self._camera
 
-class Input:
-    def __init__(self):
-        self.keyboard_keys = []
-
-mostrash = None
-_input_controller = Input()
-
-def init(width, height):
-    global mostrash
-    mostrash = MosTrash(width, height)
-
 #Aki é o arquivo principal onde podemos conectar modulos e criar outras funções globais.
 class World:
     def __init__(self):
@@ -70,28 +59,41 @@ class Camera:
         rect.move_ip(offset_x, offset_y)
         pygame.draw.rect(self._display, color, rect)
 
-    def draw(self, object: Entity):
-        #TODO!
-        return
+    def draw(self, obj: Entity):
+        bodies = obj.rects()
+        for body in bodies:
+            self.draw_rect(body[0], body[1])
 
+class Input:
+    def __init__(self):
+        self.keyboard_keys = []
+
+mostrash: MosTrash | None = None
+_input_controller = Input()
+
+def init(width, height):
+    global mostrash
+    mostrash = MosTrash(width, height)
+
+def check_mostrash():
+    global mostrash
+    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(width, height)")
+    if not isinstance(mostrash, MosTrash): raise RuntimeError("ERRO: MOSTRASH DEFINIDO INCORRETAMENTE!")
 
 def get_window():
     global mostrash
-    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(x, y)")
-
-    return MosTrash.get_window(self = mostrash)
+    check_mostrash()
+    return mostrash.get_window()
 
 def get_clock():
     global mostrash
-    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(x, y)")
-
-    return MosTrash.get_clock(self = mostrash)
+    check_mostrash()
+    return mostrash.get_clock()
 
 def get_camera():
     global mostrash
-    if mostrash is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(x, y)")
-
-    return MosTrash.get_camera(self = mostrash)
+    check_mostrash()
+    return mostrash.get_camera()
 
 def update_input_controller():
     _input_controller.keyboard_keys = pygame.key.get_pressed()
@@ -107,7 +109,7 @@ def get_event(event_id: int) -> pygame.event.Event:
 def is_key_pressed(key: str) -> bool:
     return _input_controller.keyboard_keys[get_key(key)]
 
-def to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
+def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
     import pygame
 
     if isinstance(raster_point, tuple):
@@ -122,7 +124,8 @@ def to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -
     cart_y = (window_y_center - y) / window_y_center
     return CPoint(cart_x, cart_y)
 
-def to_raster(caster_point: CPoint | tuple[float, float] | tuple[int, int]) -> RPoint:
+
+def cartesian_to_raster(caster_point: CPoint | tuple[float, float] | tuple[int, int]) -> RPoint:
     import pygame
 
     if isinstance(caster_point, tuple):

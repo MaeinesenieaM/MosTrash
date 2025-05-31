@@ -2,7 +2,7 @@ from points import *
 
 class Entity:
     from pygame import Color, Rect
-    @property
+
     def rects(self, color: Color = Color(175, 175, 175)) -> list[tuple[Rect, Color]]:
         return []
 

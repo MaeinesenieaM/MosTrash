@@ -12,7 +12,8 @@ window = mostrash.get_window()
 clock = mostrash.get_clock()
 camera = mostrash.get_camera()
 
-button = mostrash.Button(Position(0, 0), 5, lambda: print("what"))
+button = mostrash.Button(Position(0, 0), 20, lambda: print("what"))
+games = mostrash.carregar_games()
 
 running = True
 while running:
@@ -21,8 +22,11 @@ while running:
     window.fill([0, 0, 0])
     window_surface = pygame.display.get_surface()
 
-    mouse_pos = mostrash.to_raster(pygame.mouse.get_pos())
-    button.draw(window, pygame.Color(45, 179, 45))
+    mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
+    camera.draw(button)
+
+    if button.has_point(mouse_pos): button.run_callback()
+
 
 
     print(f"{mouse_pos.x} : {mouse_pos.y}")
@@ -36,7 +40,7 @@ while running:
     if mostrash.is_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
     #"categorias" so esta aki como exemplo.
-    games = mostrash.carregar_games()
+
 
     #for categoria, games in games.items():
     #    for name, _ in games.items():
