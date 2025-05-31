@@ -1,6 +1,8 @@
 import mostrash
 import pygame
 
+from src.objects import Position
+
 #A partir daqui é o código da demonstração.
 
 #Inicia mostrash
@@ -10,12 +12,20 @@ window = mostrash.get_window()
 clock = mostrash.get_clock()
 camera = mostrash.get_camera()
 
+button = mostrash.Button(Position(0, 0), 5, lambda: print("what"))
+
 running = True
 while running:
     mostrash.update_input_controller()
     camera.update()
     window.fill([0, 0, 0])
     window_surface = pygame.display.get_surface()
+
+    mouse_pos = mostrash.to_raster(pygame.mouse.get_pos())
+    button.draw(window, pygame.Color(45, 179, 45))
+
+
+    print(f"{mouse_pos.x} : {mouse_pos.y}")
 
     offset_x, offset_y = camera.get_offset()
     #Checa por eventos.
@@ -28,7 +38,10 @@ while running:
     #"categorias" so esta aki como exemplo.
     games = mostrash.carregar_games()
 
-    games["teste"]["blue"]["module"].start(window)
+    #for categoria, games in games.items():
+    #    for name, _ in games.items():
+    #        print(f"{categoria}: {name}")
+
 
     pygame.display.flip()
     clock.tick(60)

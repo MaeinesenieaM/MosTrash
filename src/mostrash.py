@@ -4,6 +4,7 @@ import os
 import importlib.util
 
 from objects import *
+from points import *
 
 class MosTrash:
     def __init__(self, width: int, height: int):
@@ -55,19 +56,24 @@ class Camera:
     def get_pos_tuple(self) -> (int, int):
         return self.pos.x, self.pos.y
 
-    def apply_offset(self, rect: pygame.Rect):
-        offset_x, offset_y = self.get_offset()
-        rect.move_ip(offset_x, offset_y)
-
-    def draw_rect(self,  color: pygame.Color, rect: pygame.Rect):
-        offset_x, offset_y = self.get_offset()
-        rect.move_ip(offset_x, offset_y)
-        pygame.draw.rect(self._display, color, rect)
-
     def get_offset(self) -> (int, int):
         width_center = self.width / 2
         height_center = self.height / 2
         return -self.pos.x + width_center, self.pos.y + height_center
+
+    def apply_offset(self, rect: pygame.Rect):
+        offset_x, offset_y = self.get_offset()
+        rect.move_ip(offset_x, offset_y)
+
+    def draw_rect(self, rect: pygame.Rect, color: pygame.Color):
+        offset_x, offset_y = self.get_offset()
+        rect.move_ip(offset_x, offset_y)
+        pygame.draw.rect(self._display, color, rect)
+
+    def draw(self, object: Entity):
+        #TODO!
+        return
+
 
 def get_window():
     global mostrash
@@ -103,6 +109,7 @@ def is_key_pressed(key: str) -> bool:
 
 def to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
     import pygame
+
     if isinstance(raster_point, tuple):
         x = float(raster_point[0])
         y = float(raster_point[1])
@@ -115,8 +122,9 @@ def to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -
     cart_y = (window_y_center - y) / window_y_center
     return CPoint(cart_x, cart_y)
 
-def to_raster(caster_point: CPoint | tuple[float, float]) -> RPoint:
+def to_raster(caster_point: CPoint | tuple[float, float] | tuple[int, int]) -> RPoint:
     import pygame
+
     if isinstance(caster_point, tuple):
         x = float(caster_point[0])
         y = float(caster_point[1]) * -1
@@ -128,6 +136,19 @@ def to_raster(caster_point: CPoint | tuple[float, float]) -> RPoint:
     raster_x = (window_x_center * x) + window_x_center
     raster_y = (window_y_center * y) + window_y_center
     return RPoint(raster_x, raster_y)
+
+def to_position(point: RPoint | CPoint | tuple[float, float] | tuple[int, int]):
+    import pygame
+
+    match point:
+        case RPoint():
+            return point.to_position()
+
+        case CPoint():
+            return point.to_position()
+
+    window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
+    return Position(point[0] - window_x_center, -point[1] + window_y_center)
 
 def carregar_games():
     games = {}

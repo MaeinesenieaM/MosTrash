@@ -98,8 +98,8 @@ while running:
 
     quadrado.size = quadrado.size + 0.2
 
-    camera.draw_rect(pygame.Color(20, 20, 20), quadrado.create_rect(from_corner = False))
-    camera.draw_rect(pygame.Color(85, 174, 58), boneco.get_body().create_rect())
+    camera.draw_rect(quadrado.create_rect(from_corner = False), pygame.Color(20, 20, 20))
+    camera.draw_rect(boneco.get_body().create_rect(), pygame.Color(85, 174, 58))
     quadrado_mouse.set_pos(pygame.mouse.get_pos())
     quadrado_mouse.draw(window, pygame.Color(198, 20, 20))
     #camera.draw_rect(pygame.Color(198, 20, 20), quadrado_mouse.create_rect())
