@@ -6,9 +6,40 @@ import importlib.util
 from objects import *
 from points import *
 
-class Input:
+class InputHandler:
     def __init__(self):
-        self.keyboard_keys = []
+        self.keys_pressed = []
+        self.keys_released = []
+
+    def update(self, events):
+        self.keys_pressed.clear()
+        self.keys_released.clear()
+
+        handled_events = []
+
+        for event in events:
+            match event.type:
+                case pygame.KEYDOWN:
+                    self.keys_pressed.append(event.key)
+                    handled_events.append(event)
+                case pygame.KEYUP:
+                    self.keys_released.append(event.key)
+                    handled_events.append(event)
+
+        for event in handled_events:
+            events.remove(event)
+
+class EventManager:
+    def __init__(self):
+        self.inputs = InputHandler()
+
+    #Atualiza eventos proprios tambem
+    def pull_events(self) -> list:
+        events = pygame.event.get()
+
+        self.inputs.update(events)
+
+        return events
 
 class Context:
     def __init__(self, width: int, height: int):
@@ -63,8 +94,13 @@ class Camera:
         rect.move_ip(offset_x, offset_y)
         pygame.draw.rect(self._display, color, rect)
 
-    def draw(self, obj: Entity):
-        bodies = obj.rects()
+    def draw(self, obj: Entity, color: pygame.Color | None = None):
+        bodies = []
+        if color is None:
+            bodies = obj.rects()
+        else:
+            bodies = obj.rects(color)
+
         for body in bodies:
             self.draw_rect(body[0], body[1])
 
@@ -75,20 +111,10 @@ class Games:
     def get_game(self, category: str, game: str):
         return self.games[category][game]["module"].start
 
-_input_controller = Input()
+_event_manager = EventManager()
 
 def init(width: int, height: int):
     return Context(width, height)
-
-#def check_context():
-#    global context
-#    if context is None: raise RuntimeError("ERRO: MOSTRASH NÃO FOI INICIADO!\n PORFAVOR INSIRA mostrash.init(width, height)")
-#    if not isinstance(context, Context): raise RuntimeError("ERRO: MOSTRASH DEFINIDO INCORRETAMENTE!")
-#
-#def get_context():
-#    check_context()
-#    global context
-#    return context
 
 def carregar_games():
     games = {}
@@ -113,15 +139,22 @@ def carregar_games():
 
     return games
 
-def update_input_controller():
-    _input_controller.keyboard_keys = pygame.key.get_pressed()
-
-def is_key_pressed(key: str) -> bool:
-    return _input_controller.keyboard_keys[get_key(key)]
-
 #Recebe a chave de um input, como o do teclado, por exemplo.
 def get_key(key: str) -> int:
-    return pygame.key.key_code(key)
+    keycode = pygame.key.key_code(key.lower())
+    return keycode
+
+def pull_events():
+    global _event_manager
+    return _event_manager.pull_events()
+
+def is_key_pressed(key: str) -> bool:
+    keycode = get_key(key)
+    return keycode in _event_manager.inputs.keys_pressed
+
+def is_key_released(key: str) -> bool:
+    keycode = get_key(key)
+    return keycode in _event_manager.inputs.keys_released
 
 #Recebe uma classe de Event que pode ser usada para ser enviada com o pygame.event.post()
 def get_event(event_id: int) -> pygame.event.Event:

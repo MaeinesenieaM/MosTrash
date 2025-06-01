@@ -7,9 +7,11 @@ def start(context: mostrash.Context):
 
     running = True
     while running:
+        for event in mostrash.pull_events():
+            match event.type:
+                case pygame.QUIT: running = False
 
         window.fill([240, 0, 0])
-        mostrash.update_input_controller()
         if mostrash.is_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
         pygame.display.flip()
