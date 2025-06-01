@@ -74,8 +74,8 @@ class Button(Entity, Sprite):
     def set_callback(self, callback: Callable[[], None]):
         self._callback = callback
 
-    def run_callback(self):
-        if self._callback: self._callback()
+    def run_callback(self) -> any:
+        if self._callback: return self._callback()
         
     def has_point(self, pos: Position | RPoint | CPoint) -> bool:
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
@@ -97,7 +97,7 @@ class Button(Entity, Sprite):
             y = y - self.size / 2
         return pygame.Rect(x, y, self.size, self.size)
 
-    def get_outer_rect(self, from_corner = False):
+    def get_outer_rect(self, from_corner = False) -> Rect:
         import pygame
 
         raster_pos = self._pos.to_raster()

@@ -1,18 +1,18 @@
 import mostrash
 import pygame
 
-from src.objects import Position
-
 #A partir daqui é o código da demonstração.
 
 #Inicia mostrash
-context = mostrash.init(600, 600)
+context: mostrash.Context = mostrash.init(600, 600)
 
 window = context.get_window()
 clock = context.get_clock()
 camera = context.get_camera()
 
 games = mostrash.Games()
+assets = mostrash.Assets()
+print(assets.get_sound_path("CLOWN"))
 
 #butão de exemplo.
 buttonR = mostrash.Button(
@@ -57,7 +57,6 @@ while running:
     #Checa por eventos.
 
     if mostrash.is_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
-    if mostrash.is_key_pressed("w"): print("yes")
 
     pygame.display.flip()
     clock.tick(60)

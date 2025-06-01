@@ -1,10 +1,11 @@
 import pygame
-
 import os
 import importlib.util
 
 from objects import *
 from points import *
+
+from typing import Callable
 
 class InputHandler:
     def __init__(self):
@@ -33,7 +34,7 @@ class EventManager:
     def __init__(self):
         self.inputs = InputHandler()
 
-    #Atualiza eventos proprios tambem
+    #Atualiza eventos próprios também
     def pull_events(self) -> list:
         events = pygame.event.get()
 
@@ -95,7 +96,6 @@ class Camera:
         pygame.draw.rect(self._display, color, rect)
 
     def draw(self, obj: Entity, color: pygame.Color | None = None):
-        bodies = []
         if color is None:
             bodies = obj.rects()
         else:
@@ -106,17 +106,31 @@ class Camera:
 
 class Games:
     def __init__(self):
-        self.games = carregar_games()
+        self._games = load_games()
 
-    def get_game(self, category: str, game: str):
-        return self.games[category][game]["module"].start
+    def get_game(self, category: str, game: str) -> Callable[[Context], bool] | None:
+        if not category in self._games: return None
+        elif not game in self._games[category]: return None
+        return self._games[category][game]["module"].start
+
+class Assets:
+    def __init__(self):
+        self._assets = load_assets()
+
+    def get_sound_path(self, name):
+        if not name in self._assets["sounds"]: return None
+        return self._assets["sounds"][name]["path"]
+
+    def get_image_path(self, name):
+        if not name in self._assets["images"]: return None
+        return self._assets["images"][name]["path"]
 
 _event_manager = EventManager()
 
-def init(width: int, height: int):
+def init(width: int, height: int) -> Context:
     return Context(width, height)
 
-def carregar_games():
+def load_games():
     games = {}
 
     path_main = os.path.dirname(__file__)
@@ -138,6 +152,31 @@ def carregar_games():
             games[categoria][name] = {"path": path, "module": module}
 
     return games
+
+def load_assets():
+    assets = {"sounds": {}, "images": {}}
+
+    path_main = os.path.dirname(__file__)
+    path_assets = os.path.join(path_main, "assets")
+
+    path_sounds = os.path.join(path_assets, "sounds")
+    path_images = os.path.join(path_assets, "images")
+
+    for file in os.listdir(path_sounds):
+        if not (file.endswith(".wav") or file.endswith(".ogg")): continue
+        name = file[:-4] #Remove .py do nome do arquivo
+        path = os.path.join(path_sounds, file)
+
+        assets["sounds"][name] = {"path": path}
+
+    for file in os.listdir(path_images):
+        if not (file.endswith(".png") or file.endswith(".jpeg")): continue
+        name = file[:-4] #Aki them um erro, eu resolvo depois.
+        path = os.path.join(path_sounds, file)
+
+        assets["images"][name] = {"path": path}
+
+    return assets
 
 #Recebe a chave de um input, como o do teclado, por exemplo.
 def get_key(key: str) -> int:
