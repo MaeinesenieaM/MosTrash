@@ -1,3 +1,4 @@
+from pygame.sprite import Sprite
 from points import *
 
 class Entity:
@@ -8,10 +9,11 @@ class Entity:
 
 #Diferente de um Rect comum, Square é um objeto dinâmico que muda de acordo com seus dados;
 #pode ser até considerado mais caro que um Simples Rect.
-class Square(Entity):
+class Square(Entity, Sprite):
     from pygame import Color, Rect
 
     def __init__(self, pos: Position | RPoint | CPoint, size: float | int):
+        super().__init__()
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
         self._pos = pos
@@ -51,12 +53,13 @@ class Square(Entity):
         from pygame import Color
         return [(self.create_rect(), Color(175, 175, 175))]
 
-class Button(Entity):
+class Button(Entity, Sprite):
     from pygame import Color, Rect
     from collections.abc import Callable
 
     def __init__(self, pos: Position | RPoint | CPoint, size: float | int, callback: Callable[..., any] = None):
         from collections.abc import Callable
+        super().__init__()
 
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
