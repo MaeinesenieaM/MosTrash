@@ -1,17 +1,23 @@
 #Ponto Raster baseado em coordenadas da tela do programa.
 class RPoint:
+    """Ponto Raster baseado em coordenadas da tela do programa.
+    (0, 0) seria o canto superior esquerdo da tela neste caso.
+    """
     def __init__(self, x: float, y: float):
         self.x = float(x)
         self.y = float(y)
 
     def to_position(self):
+        """Converte RPoint, para Position."""
         import pygame
 
         window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
         return Position(self.x - window_x_center, -self.y + window_y_center)
 
-#Ponto Cartesiano, vai de −1,0 a 1,0 conforme o canto da tela.
 class CPoint:
+    """Ponto Cartesiano, vai de −1,0 a 1,0 conforme o canto da tela.
+    (1.0, 0.0) seria o centro do canto direito da tela.
+    """
     def __init__(self, x: float | int, y: float | int):
         x = float(x)
         y = float(y)
@@ -19,6 +25,7 @@ class CPoint:
         self.y = ((y + 1) % 2) - 1
 
     def to_raster(self):
+        """Converte CPoint, para RPoint."""
         import pygame
 
         x = self.x
@@ -29,6 +36,7 @@ class CPoint:
         return RPoint(raster_x, raster_y)
 
     def to_position(self):
+        """Converte CPoint, para Position"""
         import pygame
 
         x = self.x
@@ -38,16 +46,22 @@ class CPoint:
         pos_y = (window_y_center * y)
         return Position(pos_x, pos_y)
 
-#Funciona do jeito convencional de coordenada, sendo x = 0, y = 0 o centro.
+#
 class Position:
+    """Funciona do jeito convencional de coordenada.
+    Diferente dos outros pontos, este é completamente independente da tela.
+    Normalmente usado em conjunto com a camera.
+    """
     def __init__(self, x: float, y: float):
         self.x = float(x)
         self.y = float(y)
 
     def to_raster(self) -> RPoint:
+        """Converte Position, paa RPoint"""
         return RPoint(self.x, -self.y)
 
 def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
+    """Converte RPoint, para CPoint."""
     import pygame
 
     if isinstance(raster_point, tuple):
@@ -64,6 +78,7 @@ def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, 
 
 
 def cartesian_to_raster(caster_point: CPoint | tuple[float, float] | tuple[int, int]) -> RPoint:
+    """Converte CPoint, para RPoint."""
     import pygame
 
     if isinstance(caster_point, tuple):
@@ -79,6 +94,7 @@ def cartesian_to_raster(caster_point: CPoint | tuple[float, float] | tuple[int, 
     return RPoint(raster_x, raster_y)
 
 def to_position(point: RPoint | CPoint | tuple[float, float] | tuple[int, int]):
+    """Converte RPoint ou CPoint em Position."""
     import pygame
 
     match point:

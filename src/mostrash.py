@@ -8,11 +8,18 @@ from points import *
 from typing import Callable
 
 class InputHandler:
+    """
+    Essa classe é responsável por organizar os inputs do teclado,
+    sem ela seria complicado usar o teclado.
+    """
     def __init__(self):
         self.keys_pressed = []
         self.keys_released = []
 
-    def update(self, events):
+    def update(self, events: list[pygame.event.Event]):
+        """
+        Analisa os eventos dados, atualiza sua memória, e retorna os eventos não usados.
+        """
         self.keys_pressed.clear()
         self.keys_released.clear()
 
@@ -31,11 +38,16 @@ class InputHandler:
             events.remove(event)
 
 class EventManager:
+    """
+    Organiza qualquer coisa relacionada a eventos do pygame.
+    """
     def __init__(self):
         self.inputs = InputHandler()
 
-    #Atualiza eventos próprios também
     def pull_events(self) -> list:
+        """
+        Chama os eventos em queue e trata eles, retorna aqueles que não foram usados.
+        """
         events = pygame.event.get()
 
         self.inputs.update(events)
@@ -43,6 +55,10 @@ class EventManager:
         return events
 
 class Context:
+    """
+    A Classe Context é a classe mais importante de mostrash, ela carrega todos os dados
+    necessários que todos os modulos precisam para funcionar.
+    """
     def __init__(self, width: int, height: int):
         if not pygame.get_init(): pygame.init()
         self._window = pygame.display.set_mode((width, height), flags = pygame.RESIZABLE)
@@ -60,6 +76,7 @@ class Context:
 
 #Aki é o arquivo principal onde podemos conectar modulos e criar outras funções globais.
 class World:
+    """ESSA CLASSE ESTÁ INCOMPLETA E INUTILIZÁVEL NÃO USE ELA!"""
     def __init__(self):
         self.entities = {}
 
@@ -68,6 +85,11 @@ class World:
         self.entities.setdefault(obj_name, []).append(obj)
 
 class Camera:
+    """
+    A Camera funciona como os olhos do motor grafico, é fortemente recomendado
+    usar ela para desenhar objetos, já que é por ela que suas coordenadas são tratadas.
+    Porem não é o obrigatório o uso dela se for usar outros metodos de desenhar
+    """
     def __init__(self, display: pygame.surface.Surface):
         self.width = float(display.get_width())
         self.height = float(display.get_height())
@@ -75,6 +97,7 @@ class Camera:
         self.pos = Position(0.0, 0.0)
 
     def update(self):
+        """Atualiza o tamanho da camera conforme a tela."""
         self.width = float(self._display.get_width())
         self.height = float(self._display.get_height())
 
@@ -105,10 +128,16 @@ class Camera:
             self.draw_rect(body[0], body[1])
 
 class Games:
+    """
+    Guardas os modulos em games de forma que possibilita a chamada de sua função principal.
+    NÃO RECOMENDADO O USO DENTRO DOS MINI-GAMES!
+    """
     def __init__(self):
         self._games = load_games()
 
     def get_game(self, category: str, game: str) -> Callable[[Context], bool] | None:
+        """Caso encontre o jogo em games, retorna sua função start(),
+        caso contrario retornara None."""
         if not category in self._games: return None
         elif not game in self._games[category]: return None
         return self._games[category][game]["module"].start
@@ -118,16 +147,21 @@ class Assets:
         self._assets = load_assets()
 
     def get_sound_path(self, name):
+        """Caso encontre o som em assets, retorna o caminho do arquivo,
+        caso contrario retornara None."""
         if not name in self._assets["sounds"]: return None
         return self._assets["sounds"][name]["path"]
 
     def get_image_path(self, name):
+        """Caso encontre a imagem em assets, retorna o caminho do arquivo,
+        caso contrario retornara None."""
         if not name in self._assets["images"]: return None
         return self._assets["images"][name]["path"]
 
 _event_manager = EventManager()
 
 def init(width: int, height: int) -> Context:
+    """Inicia o motor do jogo e retorna seu Contexto."""
     return Context(width, height)
 
 def load_games():
@@ -178,7 +212,6 @@ def load_assets():
 
     return assets
 
-#Recebe a chave de um input, como o do teclado, por exemplo.
 def get_key(key: str) -> int:
     keycode = pygame.key.key_code(key.lower())
     return keycode
@@ -187,14 +220,16 @@ def pull_events():
     global _event_manager
     return _event_manager.pull_events()
 
-def is_key_pressed(key: str) -> bool:
+def has_key_pressed(key: str) -> bool:
+    """Verifica se uma tecla foi pressionada"""
     keycode = get_key(key)
     return keycode in _event_manager.inputs.keys_pressed
 
-def is_key_released(key: str) -> bool:
+def has_key_released(key: str) -> bool:
+    """Verifica se uma tecla foi solta"""
     keycode = get_key(key)
     return keycode in _event_manager.inputs.keys_released
 
-#Recebe uma classe de Event que pode ser usada para ser enviada com o pygame.event.post()
 def get_event(event_id: int) -> pygame.event.Event:
+    """Recebe uma classe de Event que pode ser usada para ser enviada com o pygame.event.post()"""
     return pygame.event.Event(event_id)

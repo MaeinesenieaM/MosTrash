@@ -14,7 +14,7 @@ games = mostrash.Games()
 assets = mostrash.Assets()
 print(assets.get_sound_path("CLOWN"))
 
-#butão de exemplo.
+#botão de exemplo.
 buttonR = mostrash.Button(
     mostrash.CPoint(-0.5, 0),
     32,
@@ -54,9 +54,8 @@ while running:
     if buttonB.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonB.run_callback()
 
     offset_x, offset_y = camera.get_offset()
-    #Checa por eventos.
 
-    if mostrash.is_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
+    if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
     pygame.display.flip()
     clock.tick(60)
