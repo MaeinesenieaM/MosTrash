@@ -1,5 +1,6 @@
-from pygame.sprite import Sprite
-from points import *
+import pygame
+
+from src.defs.points import *
 
 class Entity:
     """EM PROGRESSO!
@@ -11,7 +12,7 @@ class Entity:
         """Formata os retângulos de um objeto junto som suas respectivas cores."""
         return []
 
-class Square(Entity, Sprite):
+class Square(Entity, pygame.sprite.Sprite):
     """
     Diferente de um Rect comum, Square é um objeto dinâmico que muda de acordo com seus dados;
     pode ser até considerado mais caro que um Simples Rect, mesmo sendo apenas um quadrado.
@@ -19,7 +20,7 @@ class Square(Entity, Sprite):
     from pygame import Color, Rect
 
     def __init__(self, pos: Position | RPoint | CPoint, size: float | int):
-        super().__init__()
+        pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
         self._pos = pos
@@ -62,7 +63,7 @@ class Square(Entity, Sprite):
     def rects(self, color: Color = Color(175, 175, 175)) -> list[tuple[Rect, Color]]:
         return [(self.create_rect(), color)]
 
-class Button(Entity, Sprite):
+class Button(Entity, pygame.sprite.Sprite):
     """
     Button é um objeto que funciona como um botão que guarda uma função específica dentro dele.
     Para incluir uma função no botão utilize set_callback().
@@ -76,8 +77,7 @@ class Button(Entity, Sprite):
         callback: Callable[..., any] = None,
     ):
         from collections.abc import Callable
-        super().__init__()
-
+        pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
         self._pos = pos
@@ -103,8 +103,6 @@ class Button(Entity, Sprite):
         return inside_x and inside_y
 
     def _get_inner_rect(self, from_corner = False) -> Rect:
-        import pygame
-
         raster_pos = self._pos.to_raster()
         x = raster_pos.x
         y = -raster_pos.y
@@ -114,8 +112,6 @@ class Button(Entity, Sprite):
         return pygame.Rect(x, y, self.size, self.size)
 
     def _get_outer_rect(self, from_corner = False) -> Rect:
-        import pygame
-
         raster_pos = self._pos.to_raster()
         offset = 5.0
         x = raster_pos.x
@@ -128,3 +124,16 @@ class Button(Entity, Sprite):
     def rects(self, color: Color = Color(175, 175, 175)) -> list[tuple[Rect, Color]]:
         from pygame import Color
         return [(self._get_outer_rect(), color), (self._get_inner_rect(), Color(43, 164, 43))]
+
+class Bitmap(Entity, pygame.sprite.Sprite):
+    def __init__(
+        self,
+        pos: Position | RPoint | CPoint,
+        image_path: str
+    ):
+        pygame.sprite.Sprite.__init__(self)
+        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
+            pos = pos.to_position()
+
+        self._pos = pos
+        self.image = pygame.image.load(image_path).convert_alpha()

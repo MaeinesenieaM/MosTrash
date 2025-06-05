@@ -12,7 +12,8 @@ camera = context.get_camera()
 
 games = mostrash.Games()
 assets = mostrash.Assets()
-print(assets.get_sound_path("CLOWN"))
+
+image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
 
 #botão de exemplo.
 buttonR = mostrash.Button(
@@ -44,6 +45,8 @@ while running:
 
     mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
     mouse_down = pygame.mouse.get_pressed()[0]
+
+    camera.draw(image)
 
     camera.draw(buttonR, pygame.Color(125, 0, 0))
     camera.draw(buttonG, pygame.Color(0, 125, 0))

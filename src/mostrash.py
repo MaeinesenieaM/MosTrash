@@ -4,6 +4,7 @@ import importlib.util
 from src.defs.objects import *
 from src.defs.points import *
 from src.defs.events import *
+from src.defs.assets import *
 
 from typing import Callable
 
@@ -28,16 +29,6 @@ class Context:
 
     def get_camera(self):
         return self._camera
-
-#Aki é o arquivo principal onde podemos conectar modulos e criar outras funções globais.
-class World:
-    """ESSA CLASSE ESTÁ INCOMPLETA E INUTILIZÁVEL NÃO USE ELA!"""
-    def __init__(self):
-        self.entities = {}
-
-    def insert_object(self, obj):
-        obj_name = obj.__class__.__name__
-        self.entities.setdefault(obj_name, []).append(obj)
 
 class Camera:
     """
@@ -74,11 +65,14 @@ class Camera:
         pygame.draw.rect(self._display, color, rect)
 
     def draw(self, obj: Entity, color: pygame.Color | None = None):
+        if isinstance(obj, Bitmap):
+            self._display.blit(obj.image, self.pos.to_raster_raw())
+            return
+
         if color is None:
             bodies = obj.rects()
         else:
             bodies = obj.rects(color)
-
         for body in bodies:
             self.draw_rect(body[0], body[1])
 
@@ -96,6 +90,15 @@ class Games:
         if not category in self._games: return None
         elif not game in self._games[category]: return None
         return self._games[category][game]["module"].start
+
+class World:
+    """ESSA CLASSE ESTÁ INCOMPLETA E INUTILIZÁVEL NÃO USE ELA!"""
+    def __init__(self):
+        self.entities = {}
+
+    def insert_object(self, obj):
+        obj_name = obj.__class__.__name__
+        self.entities.setdefault(obj_name, []).append(obj)
 
 def init(width: int, height: int) -> Context:
     """Inicia o motor do jogo e retorna seu Contexto."""

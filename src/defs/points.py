@@ -60,6 +60,13 @@ class Position:
         """Converte Position, paa RPoint"""
         return RPoint(self.x, -self.y)
 
+    def to_raster_raw(self) -> tuple[float, float]:
+        converted = RPoint(self.x, -self.y)
+        return converted.x, converted.y
+
+    def offset(self, x_offset: float, y_offset: float) -> tuple[float, float]:
+        return self.x + x_offset, self.y + y_offset
+
 def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
     """Converte RPoint, para CPoint."""
     import pygame
