@@ -1,9 +1,9 @@
 import os
 import importlib.util
 
-from src.lib.objects import *
-from src.lib.points import *
-from src.lib.events import *
+from src.defs.objects import *
+from src.defs.points import *
+from src.defs.events import *
 
 from typing import Callable
 
