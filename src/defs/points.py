@@ -1,6 +1,4 @@
-#Ponto Raster baseado em coordenadas da tela do programa.
 import pygame
-
 
 class RPoint:
     """Ponto Raster baseado em coordenadas da tela do programa.
@@ -16,6 +14,9 @@ class RPoint:
 
         window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
         return Position(self.x - window_x_center, -self.y + window_y_center)
+
+    def get_vector(self) -> pygame.Vector2:
+        return pygame.Vector2(self.x, self.y)
 
 class CPoint:
     """Ponto Cartesiano, vai de −1,0 a 1,0 conforme o canto da tela.
@@ -49,7 +50,9 @@ class CPoint:
         pos_y = (window_y_center * y)
         return Position(pos_x, pos_y)
 
-#
+    def get_vector(self) -> pygame.Vector2:
+        return pygame.Vector2(self.x, self.y)
+
 class Position:
     """Funciona do jeito convencional de coordenada.
     Diferente dos outros pontos, este é completamente independente da tela.
@@ -67,6 +70,9 @@ class Position:
     def to_raster_raw(self) -> tuple[float, float]:
         width, height = pygame.display.get_window_size()
         return width / 2 - self.x, height / 2 + self.y
+
+    def get_vector(self) -> pygame.Vector2:
+        return pygame.Vector2(self.x, self.y)
 
     def offset(self, x_offset: float, y_offset: float) -> tuple[float, float]:
         return self.x + x_offset, self.y + y_offset
