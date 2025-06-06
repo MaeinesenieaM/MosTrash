@@ -1,4 +1,7 @@
 #Ponto Raster baseado em coordenadas da tela do programa.
+import pygame
+
+
 class RPoint:
     """Ponto Raster baseado em coordenadas da tela do programa.
     (0, 0) seria o canto superior esquerdo da tela neste caso.
@@ -58,11 +61,12 @@ class Position:
 
     def to_raster(self) -> RPoint:
         """Converte Position, paa RPoint"""
-        return RPoint(self.x, -self.y)
+        width, height = pygame.display.get_window_size()
+        return RPoint(width / 2 - self.x, height / 2 + self.y)
 
     def to_raster_raw(self) -> tuple[float, float]:
-        converted = RPoint(self.x, -self.y)
-        return converted.x, converted.y
+        width, height = pygame.display.get_window_size()
+        return width / 2 - self.x, height / 2 + self.y
 
     def offset(self, x_offset: float, y_offset: float) -> tuple[float, float]:
         return self.x + x_offset, self.y + y_offset

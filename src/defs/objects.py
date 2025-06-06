@@ -1,6 +1,7 @@
 import pygame
 
 from src.defs.points import *
+from src.assets import Assets
 
 class Entity:
     """EM PROGRESSO!
@@ -73,7 +74,8 @@ class Button(Entity, pygame.sprite.Sprite):
 
     def __init__(
         self,
-        pos: Position | RPoint | CPoint, size: float | int,
+        pos: Position | RPoint | CPoint,
+        size: float | int,
         callback: Callable[..., any] = None,
     ):
         from collections.abc import Callable
@@ -97,25 +99,26 @@ class Button(Entity, pygame.sprite.Sprite):
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
 
-        inside_x = self._pos.x - self.size < pos.x < self._pos.x + self.size
-        inside_y = self._pos.y - self.size < pos.y < self._pos.y + self.size
+        inner_size = self.size / 2
+        inside_x = self._pos.x - inner_size < pos.x < self._pos.x + inner_size
+        inside_y = self._pos.y - inner_size < pos.y < self._pos.y + inner_size
 
         return inside_x and inside_y
 
     def _get_inner_rect(self, from_corner = False) -> Rect:
-        raster_pos = self._pos.to_raster()
-        x = raster_pos.x
-        y = -raster_pos.y
+        #raster_pos = self._pos.to_raster()
+        x = self._pos.x
+        y = self._pos.y
         if not from_corner:
             x = x - self.size / 2
             y = y - self.size / 2
         return pygame.Rect(x, y, self.size, self.size)
 
     def _get_outer_rect(self, from_corner = False) -> Rect:
-        raster_pos = self._pos.to_raster()
-        offset = 5.0
-        x = raster_pos.x
-        y = -raster_pos.y
+        #raster_pos = self._pos.to_raster()
+        offset = self.size / 2
+        x = self._pos.x
+        y = self._pos.y
         if not from_corner:
             x = x - (offset / 2 + self.size / 2)
             y = y - (offset / 2 + self.size / 2)
@@ -126,14 +129,34 @@ class Button(Entity, pygame.sprite.Sprite):
         return [(self._get_outer_rect(), color), (self._get_inner_rect(), Color(43, 164, 43))]
 
 class Bitmap(Entity, pygame.sprite.Sprite):
+    from os import PathLike
+
     def __init__(
         self,
         pos: Position | RPoint | CPoint,
-        image_path: str
+        image_path: PathLike
+    ):
+        pygame.sprite.Sprite.__init__(self)
+        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
+            pos = pos.to_position()
+
+        self.pos = pos
+        self.image = pygame.image.load(image_path).convert_alpha()
+
+class Label(Entity, pygame.sprite.Sprite):
+    from os import PathLike
+
+    def __init__(
+        self,
+        pos: Position | RPoint | CPoint,
+        text: str,
+        font: PathLike = Assets().get_font_path("fixedsys"),
+        size: int = 16
     ):
         pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
 
         self._pos = pos
-        self.image = pygame.image.load(image_path).convert_alpha()
+        self.text = text
+        self.font = pygame.font.Font(font, size)

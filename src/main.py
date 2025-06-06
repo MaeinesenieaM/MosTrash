@@ -14,6 +14,7 @@ games = mostrash.Games()
 assets = mostrash.Assets()
 
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
+texto = mostrash.Label(mostrash.Position(0.0, 0.0), "funciona", size = 64)
 
 #botão de exemplo.
 buttonR = mostrash.Button(
@@ -52,6 +53,8 @@ while running:
     camera.draw(buttonG, pygame.Color(0, 125, 0))
     camera.draw(buttonB, pygame.Color(0, 0, 125))
 
+    camera.draw(texto)
+
     if buttonR.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonR.run_callback()
     if buttonG.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonG.run_callback()
     if buttonB.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonB.run_callback()
@@ -60,6 +63,7 @@ while running:
 
     if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
+    camera.pos.y += 0.005
     pygame.display.flip()
     clock.tick(60)
 

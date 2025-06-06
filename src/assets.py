@@ -4,21 +4,21 @@ class Assets:
     def __init__(self):
         self._assets = _load_assets()
 
-    def get_sound_path(self, name: str) -> str | None:
+    def get_sound_path(self, name: str) -> os.PathLike | None:
         """Caso encontre o som em assets, retorna o caminho do arquivo,
         caso contrario retornara None."""
         name = name.lower()
         if not name in self._assets["sounds"]: return None
         return self._assets["sounds"][name]["path"]
 
-    def get_image_path(self, name: str) -> str | None:
+    def get_image_path(self, name: str) -> os.PathLike | None:
         """Caso encontre a imagem em assets, retorna o caminho do arquivo,
         caso contrario retornara None."""
         name = name.lower()
         if not name in self._assets["images"]: return None
         return self._assets["images"][name]["path"]
 
-    def get_font_path(self, name: str) -> str | None:
+    def get_font_path(self, name: str) -> os.PathLike | None:
         name = name.lower()
         if not name in self._assets["fonts"]: return None
         return self._assets["fonts"][name]["path"]

@@ -1,5 +1,7 @@
 import importlib.util
 
+import pygame
+
 from src.defs.objects import *
 from src.defs.points import *
 from src.defs.events import *
@@ -50,9 +52,7 @@ class Camera:
         return self.pos.x, self.pos.y
 
     def get_offset(self) -> (int, int):
-        width_center = self.width / 2
-        height_center = self.height / 2
-        return -self.pos.x + width_center, self.pos.y + height_center
+        return self.pos.to_raster_raw()
 
     def apply_offset(self, rect: pygame.Rect):
         offset_x, offset_y = self.get_offset()
@@ -65,8 +65,12 @@ class Camera:
 
     def draw(self, obj: Entity, color: pygame.Color | None = None):
         if isinstance(obj, Bitmap):
-            self._display.blit(obj.image, self.pos.to_raster_raw())
+            self._display.blit(obj.image, self.get_offset())
             return
+        elif isinstance(obj, Label):
+            if color is None: color = pygame.Color(220, 220, 220)
+            font_texture = obj.font.render(obj.text, False, color)
+            self._display.blit(font_texture, self.get_offset())
 
         if color is None:
             bodies = obj.rects()
