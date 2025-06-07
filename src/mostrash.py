@@ -47,28 +47,29 @@ class Camera:
         self.width = float(self._display.get_width())
         self.height = float(self._display.get_height())
 
-    def get_pos_tuple(self) -> (int, int):
+    def get_offset(self) -> tuple[float, float]:
         return self.pos.x, self.pos.y
 
-    def get_offset(self) -> (int, int):
+    def get_raster_offset(self) -> tuple[float, float]:
         return self.pos.to_raster_raw()
 
-    def apply_offset(self, rect: pygame.Rect):
+    def apply_offset(self, pos: Position) -> tuple[float, float]:
         offset_x, offset_y = self.get_offset()
-        rect.move_ip(offset_x, offset_y)
+        pos_x, pos_y = pos.get_tuple()
+        return Position(pos_x + offset_x, pos_y + offset_y).to_raster_raw()
 
     def draw_rect(self, rect: pygame.Rect, color: pygame.Color):
-        offset_x, offset_y = self.get_offset()
+        offset_x, offset_y = self.get_raster_offset()
         rect.move_ip(offset_x, offset_y)
         pygame.draw.rect(self._display, color, rect)
 
     def draw(self, obj: Entity, color: pygame.Color | None = None):
         if isinstance(obj, Bitmap):
-            self._display.blit(obj.image, self.get_offset())
+            self._display.blit(obj.image, self.apply_offset(obj.pos))
             return
         elif isinstance(obj, Label):
             if color is None: color = pygame.Color(220, 220, 220)
-            self._display.blit(obj.texture, self.get_offset())
+            self._display.blit(obj.texture, self.apply_offset(obj.pos))
 
         if color is None:
             bodies = obj.rects()

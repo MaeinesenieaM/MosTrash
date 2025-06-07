@@ -15,6 +15,9 @@ class RPoint:
         window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
         return Position(self.x - window_x_center, -self.y + window_y_center)
 
+    def get_tuple(self) -> tuple[float, float]:
+        return self.x, self.y
+
     def get_vector(self) -> pygame.Vector2:
         return pygame.Vector2(self.x, self.y)
 
@@ -50,6 +53,9 @@ class CPoint:
         pos_y = (window_y_center * y)
         return Position(pos_x, pos_y)
 
+    def get_tuple(self) -> tuple[float, float]:
+        return self.x, self.y
+
     def get_vector(self) -> pygame.Vector2:
         return pygame.Vector2(self.x, self.y)
 
@@ -66,11 +72,14 @@ class Position:
     def to_raster(self) -> RPoint:
         """Converte Position, paa RPoint"""
         width, height = pygame.display.get_window_size()
-        return RPoint(width / 2 - self.x, height / 2 + self.y)
+        return RPoint(width / 2 + self.x, height / 2 - self.y)
 
     def to_raster_raw(self) -> tuple[float, float]:
         width, height = pygame.display.get_window_size()
-        return width / 2 - self.x, height / 2 + self.y
+        return width / 2 + self.x, height / 2 - self.y
+
+    def get_tuple(self) -> tuple[float, float]:
+        return self.x, self.y
 
     def get_vector(self) -> pygame.Vector2:
         return pygame.Vector2(self.x, self.y)
