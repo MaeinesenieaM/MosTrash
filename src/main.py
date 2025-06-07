@@ -14,7 +14,9 @@ games = mostrash.Games()
 assets = mostrash.Assets()
 
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
-texto = mostrash.Label(mostrash.Position(0.0, 0.0), "funciona", size = 64)
+texto = mostrash.Label(mostrash.Position(0.0, 0.0), "funciona", size = 64, color = mostrash.BLUE)
+
+texto.set_text("SIM!")
 
 #botão de exemplo.
 buttonR = mostrash.Button(
@@ -42,6 +44,7 @@ while running:
             case pygame.QUIT: running = False
 
     camera.update()
+
     window.fill([12, 12, 12])
 
     mouse_pos = mostrash.to_position(pygame.mouse.get_pos())

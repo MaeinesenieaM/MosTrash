@@ -62,6 +62,7 @@ class Position:
         self.x = float(x)
         self.y = float(y)
 
+
     def to_raster(self) -> RPoint:
         """Converte Position, paa RPoint"""
         width, height = pygame.display.get_window_size()

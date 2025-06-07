@@ -1,6 +1,7 @@
 import pygame
 
 from src.defs.points import *
+from src.defs.colors import *
 from src.assets import Assets
 
 class Entity:
@@ -143,20 +144,41 @@ class Bitmap(Entity, pygame.sprite.Sprite):
         self.pos = pos
         self.image = pygame.image.load(image_path).convert_alpha()
 
-class Label(Entity, pygame.sprite.Sprite):
+class Label(Position, Entity, pygame.sprite.Sprite):
     from os import PathLike
+    from pygame import Color
 
     def __init__(
         self,
         pos: Position | RPoint | CPoint,
         text: str,
         font: PathLike = Assets().get_font_path("fixedsys"),
-        size: int = 16
+        size: int = 16,
+        color: Color = WHITE
     ):
         pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
 
         self._pos = pos
-        self.text = text
+        self._text = text
         self.font = pygame.font.Font(font, size)
+        self._color = color
+        self.texture = self.font.render(self._text, False, self._color)
+
+    def get_pos(self):
+        return self._pos
+
+    def get_text(self):
+        return self._text
+
+    def set_text(self, text: str):
+        self._text = text
+        self._update_text()
+
+    def set_color(self, color: Color):
+        self._color = color
+        self._update_text()
+
+    def _update_text(self):
+        self.texture = self.font.render(self._text, False, self._color)
