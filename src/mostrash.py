@@ -1,5 +1,7 @@
 import importlib.util
 
+import pygame
+
 from src.defs.objects import *
 from src.defs.points import *
 from src.defs.events import *
@@ -64,12 +66,12 @@ class Camera:
         pygame.draw.rect(self._display, color, rect)
 
     def draw(self, obj: Entity, color: pygame.Color | None = None):
-        if isinstance(obj, Bitmap):
-            self._display.blit(obj.image, self.apply_offset(obj.pos))
-            return
-        elif isinstance(obj, Label):
-            if color is None: color = pygame.Color(220, 220, 220)
-            self._display.blit(obj.texture, self.apply_offset(obj.pos))
+        match obj:
+            case Bitmap(image=img, pos=pos) | Label(image=img, pos=pos):
+                #Esta linha calcula o ponto de origem para renderizar a imagem centralizada.
+                center_pos = [a - (b / 2) for a, b in zip(self.apply_offset(pos), img.get_size())]
+                self._display.blit(img, center_pos)
+                return
 
         if color is None:
             bodies = obj.rects()

@@ -4,7 +4,7 @@ import pygame
 #A partir daqui é o código da demonstração.
 
 #Inicia mostrash
-context: mostrash.Context = mostrash.init(600, 600)
+context: mostrash.Context = mostrash.init(700, 600)
 
 window = context.get_window()
 clock = context.get_clock()
@@ -13,8 +13,8 @@ camera = context.get_camera()
 games = mostrash.Games()
 assets = mostrash.Assets()
 
-image = mostrash.Bitmap(mostrash.Position(-100.0, 200.0), assets.get_image_path("boom"))
-texto = mostrash.Label(mostrash.CPoint(0.0, 0.25), "funciona!", size = 32, color = mostrash.YELLOW)
+image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
+texto = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
 
 #botão de exemplo.
 buttonR = mostrash.Button(
@@ -35,6 +35,7 @@ buttonB = mostrash.Button(
     lambda: games.get_game("teste", "blue")(context)
 )
 
+count = 0
 running = True
 while running:
     for event in mostrash.pull_events():
@@ -45,18 +46,21 @@ while running:
 
     window.fill([12, 12, 12])
 
-    image.pos.y += 10
-
     mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
     mouse_down = pygame.mouse.get_pressed()[0]
 
-    camera.draw(image)
+    count += 1
 
+    texto.set_text(str(count))
+
+    camera.draw(image) #Desenha a imagem
+
+    #Desenha os botões
     camera.draw(buttonR, pygame.Color(125, 0, 0))
     camera.draw(buttonG, pygame.Color(0, 125, 0))
     camera.draw(buttonB, pygame.Color(0, 0, 125))
 
-    camera.draw(texto)
+    camera.draw(texto) #Desenha o Texto
 
     if buttonR.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonR.run_callback()
     if buttonG.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonG.run_callback()

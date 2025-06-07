@@ -1,5 +1,3 @@
-import pygame
-
 from src.defs.points import *
 from src.defs.colors import *
 from src.assets import Assets
@@ -158,15 +156,13 @@ class Label(Position, Entity, pygame.sprite.Sprite):
     ):
         pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
-            print(pos.y)
             pos = pos.to_position()
-            print(pos.y)
 
         self.pos = pos
         self._text = text
         self.font = pygame.font.Font(font, size)
         self._color = color
-        self.texture = self.font.render(self._text, False, self._color)
+        self.image = self.font.render(self._text, False, self._color)
 
     def get_text(self) -> str:
         return self._text
@@ -180,4 +176,4 @@ class Label(Position, Entity, pygame.sprite.Sprite):
         self._update_text()
 
     def _update_text(self):
-        self.texture = self.font.render(self._text, False, self._color)
+        self.image = self.font.render(self._text, False, self._color)
