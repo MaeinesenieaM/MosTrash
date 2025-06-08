@@ -1,6 +1,5 @@
 import importlib.util
-
-import pygame
+import os
 
 from src.defs.objects import *
 from src.defs.points import *
@@ -152,3 +151,8 @@ def has_key_released(key: str) -> bool:
 def get_event(event_id: int) -> pygame.event.Event:
     """Recebe uma classe de Event que pode ser usada para ser enviada com o pygame.event.post()"""
     return pygame.event.Event(event_id)
+
+def play_sound(sound_path: os.PathLike):
+    #Eu tenho certeza que isso calça um problema de memória, mas eu não tenho paciência para elaborar
+    #algo mais inteligente.
+    pygame.mixer.Sound(sound_path).play()

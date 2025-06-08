@@ -37,6 +37,9 @@ buttonB = mostrash.Button(
 
 count = 0
 running = True
+
+mostrash.play_sound(assets.get_sound_path("clown"))
+
 while running:
     for event in mostrash.pull_events():
         match event.type:
