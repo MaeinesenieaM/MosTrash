@@ -21,6 +21,7 @@ class Context:
         self._window = pygame.display.set_mode((width, height), flags = pygame.RESIZABLE)
         self._clock = pygame.time.Clock()
         self._camera = Camera(self._window)
+        self._assets = Assets()
 
     def get_window(self):
         return self._window
@@ -30,6 +31,9 @@ class Context:
 
     def get_camera(self):
         return self._camera
+
+    def get_assets(self):
+        return self._assets
 
 class Camera:
     """

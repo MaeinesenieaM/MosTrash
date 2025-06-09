@@ -4,7 +4,7 @@ class RPoint:
     """Ponto Raster baseado em coordenadas da tela do programa.
     (0, 0) seria o canto superior esquerdo da tela neste caso.
     """
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
         self.x = float(x)
         self.y = float(y)
 
@@ -25,7 +25,7 @@ class CPoint:
     """Ponto Cartesiano, vai de −1,0 a 1,0 conforme o canto da tela.
     (1.0, 0.0) seria o centro do canto direito da tela.
     """
-    def __init__(self, x: float | int, y: float | int):
+    def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
         x = float(x)
         y = float(y)
         self.x = ((x + 1) % 2) - 1 #Formula complicada para limitar o valor entre -1,0 e 1,0.
@@ -71,7 +71,7 @@ class Position:
     Diferente dos outros pontos, este é completamente independente da tela.
     Normalmente usado em conjunto com a camera.
     """
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
         self.x = float(x)
         self.y = float(y)
 

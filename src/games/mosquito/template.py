@@ -4,6 +4,10 @@ import src.mostrash as mostrash
 def start(context: mostrash.Context):
     window = context.get_window()
     clock = context.get_clock()
+    camera = context.get_camera()
+    assets = context.get_assets()
+
+    clown: mostrash.Bitmap = mostrash.Bitmap(mostrash.Position(), assets.get_image_path("clown"))
 
     running = True
     while running:
@@ -14,9 +18,7 @@ def start(context: mostrash.Context):
         window.fill(mostrash.BLACK)
         if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
-        pygame.display.flip()
+        camera.draw(clown)
 
-        for event in pygame.event.get():
-            match event.type:
-                case pygame.QUIT: running = False
+        pygame.display.flip()
         clock.tick(60)

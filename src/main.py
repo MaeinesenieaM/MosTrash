@@ -18,11 +18,16 @@ assets = mostrash.Assets()
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
 contagem = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
 
+mostrash.play_sound(assets.get_sound_path("explosion"))
+
+
 count = 0
 running = True
 
-games_buttons = pygame.sprite.Group()#Este grupo guarda os objetos para a interface debug dos jogos.
+#Este grupo guarda os objetos para a interface debug dos jogos.
+games_buttons = pygame.sprite.Group()
 
+print(assets.get_image_path("clown"))
 
 #Este código abaixo basicamente cria objetos como botões e textos relacionados a quantos games e categorias
 #está em "games" e guarda eles em games_button para serem usados depois.
@@ -41,8 +46,6 @@ for category_index, category in enumerate(games.get_categories_names()):
         game_function = lambda c = category, n = game_name: games.get_game(c, n)(context)
         mostrash.Button(final_pos, 32, game_function).add(games_buttons)
         mostrash.Label(final_pos.clone_from_offset(y_offset = -0.1), game_name).add(games_buttons)
-
-mostrash.play_sound(assets.get_sound_path("explosion"))
 
 while running:
     for event in mostrash.pull_events():

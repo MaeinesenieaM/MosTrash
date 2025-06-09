@@ -41,7 +41,7 @@ def _load_assets():
         assets["sounds"][name] = {"path": path}
 
     for file in os.listdir(path_images):
-        if not (file.endswith(".png") or file.endswith(".jpeg")): continue
+        if not (file.endswith(".png") or file.endswith(".jpeg") or file.endswith(".jpg")): continue
         name = file[:-4].lower() #Aki tem um erro que não ira remover .jpeg completamente.
         path = os.path.join(path_images, file.lower())
 

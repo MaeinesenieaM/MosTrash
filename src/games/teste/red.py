@@ -15,8 +15,4 @@ def start(context: mostrash.Context):
         if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
         pygame.display.flip()
-
-        for event in pygame.event.get():
-            match event.type:
-                case pygame.QUIT: running = False
         clock.tick(60)
