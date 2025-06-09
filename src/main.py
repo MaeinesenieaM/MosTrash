@@ -34,13 +34,15 @@ for category_index, category in enumerate(games.get_categories_names()):
     pos_y = -1.0 + (categories_spacing / 2) + (categories_spacing * category_index)
     games_spacing = 2.0 / game_count
 
-    mostrash.Label(CPoint(0.0, pos_y + 0.2), category, size = 48, color = mostrash.YELLOW).add(games_buttons)
+    mostrash.Label(CPoint(0.0, pos_y + 0.2), category, size = 48, color = mostrash.GRAY).add(games_buttons)
     for game_index, game_name in enumerate(games.get_games_names(category)):
         pos_x = -1.0 + (games_spacing / 2) + (games_spacing * game_index)
         final_pos = CPoint(pos_x, pos_y)
         game_function = lambda c = category, n = game_name: games.get_game(c, n)(context)
         mostrash.Button(final_pos, 32, game_function).add(games_buttons)
         mostrash.Label(final_pos.clone_from_offset(y_offset = -0.1), game_name).add(games_buttons)
+
+mostrash.play_sound(assets.get_sound_path("explosion"))
 
 while running:
     for event in mostrash.pull_events():
@@ -49,7 +51,7 @@ while running:
 
     camera.update()
 
-    window.fill([12, 12, 12])
+    window.fill(mostrash.BLACK)
 
     mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
     mouse_down = pygame.mouse.get_pressed()[0]
