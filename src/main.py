@@ -1,6 +1,8 @@
 import mostrash
 import pygame
 
+from src.defs.points import CPoint
+
 #A partir daqui é o código da demonstração.
 
 #Inicia mostrash
@@ -14,31 +16,31 @@ games = mostrash.Games()
 assets = mostrash.Assets()
 
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
-texto = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
-
-#botão de exemplo.
-buttonR = mostrash.Button(
-    mostrash.CPoint(-0.5, 0.5),
-    32,
-    lambda: games.get_game("teste", "red")(context)
-)
-
-buttonG = mostrash.Button(
-    mostrash.CPoint(0, 0),
-    32,
-    lambda: games.get_game("teste", "green")(context)
-)
-
-buttonB = mostrash.Button(
-    mostrash.CPoint(0.5, -0.5),
-    32,
-    lambda: games.get_game("teste", "blue")(context)
-)
+contagem = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
 
 count = 0
 running = True
 
-mostrash.play_sound(assets.get_sound_path("clown"))
+games_buttons = pygame.sprite.Group()#Este grupo guarda os objetos para a interface debug dos jogos.
+
+
+#Este código abaixo basicamente cria objetos como botões e textos relacionados a quantos games e categorias
+#está em "games" e guarda eles em games_button para serem usados depois.
+categories_spacing = 2.0 / games.get_category_count()
+for category_index, category in enumerate(games.get_categories_names()):
+    game_count = games.get_games_count(category)
+    if game_count == 0: continue
+
+    pos_y = -1.0 + (categories_spacing / 2) + (categories_spacing * category_index)
+    games_spacing = 2.0 / game_count
+
+    mostrash.Label(CPoint(0.0, pos_y + 0.2), category, size = 48, color = mostrash.YELLOW).add(games_buttons)
+    for game_index, game_name in enumerate(games.get_games_names(category)):
+        pos_x = -1.0 + (games_spacing / 2) + (games_spacing * game_index)
+        final_pos = CPoint(pos_x, pos_y)
+        game_function = lambda c = category, n = game_name: games.get_game(c, n)(context)
+        mostrash.Button(final_pos, 32, game_function).add(games_buttons)
+        mostrash.Label(final_pos.clone_from_offset(y_offset = -0.1), game_name).add(games_buttons)
 
 while running:
     for event in mostrash.pull_events():
@@ -54,20 +56,15 @@ while running:
 
     count += 1
 
-    texto.set_text(str(count))
+    contagem.set_text(str(count))
 
     camera.draw(image) #Desenha a imagem
+    camera.draw(contagem) #Desenha o Texto
 
-    #Desenha os botões
-    camera.draw(buttonR, pygame.Color(125, 0, 0))
-    camera.draw(buttonG, pygame.Color(0, 125, 0))
-    camera.draw(buttonB, pygame.Color(0, 0, 125))
-
-    camera.draw(texto) #Desenha o Texto
-
-    if buttonR.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonR.run_callback()
-    if buttonG.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonG.run_callback()
-    if buttonB.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: buttonB.run_callback()
+    for obj in games_buttons.sprites():
+        if isinstance(obj, mostrash.Button):
+            if obj.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: obj.run_callback()
+        camera.draw(obj)
 
     offset_x, offset_y = camera.get_offset()
 

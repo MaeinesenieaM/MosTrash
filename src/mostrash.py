@@ -87,12 +87,52 @@ class Games:
     def __init__(self):
         self._games = load_games()
 
+    def get_category(self, category: str)-> dict | None:
+        if not category in self._games: return None
+        return self._games[category]
+
+    def get_categories_names(self) -> list[str]:
+        return list(self._games.keys())
+
     def get_game(self, category: str, game: str) -> Callable[[Context], bool] | None:
         """Caso encontre o jogo em games, retorna sua função start(),
         caso contrario retornara None."""
         if not category in self._games: return None
         elif not game in self._games[category]: return None
         return self._games[category][game]["module"].start
+
+    def get_games_names(self, category: str | None = None) -> list[str] | None:
+        match category:
+            case None:
+                names: list[str] = []
+                for name in self.get_categories_names():
+                    names.extend(self.get_category(name).keys())
+                return names
+            case _:
+                listed_category = self.get_category(category)
+                match listed_category:
+                    case None:
+                        print(f"ERROR! Categoria: [{category}] inexistente!")
+                        return None
+                    case _:
+                        return list(listed_category.keys())
+
+    def get_category_count(self) -> int:
+        return len(self._games)
+
+    def get_games_count(self, category: str | None = None) -> int:
+        match category:
+            case None:
+                return sum(len(category) for category in self._games.values())
+            case _:
+                listed_category = self.get_category(category)
+                match listed_category:
+                    case None:
+                        print(f"ERROR! Categoria: [{category}] inexistente!")
+                        return 0
+                    case _:
+                        return len(listed_category)
+
 
 class World:
     """ESSA CLASSE ESTÁ INCOMPLETA E INUTILIZÁVEL NÃO USE ELA!"""

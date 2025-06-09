@@ -59,6 +59,13 @@ class CPoint:
     def get_vector(self) -> pygame.Vector2:
         return pygame.Vector2(self.x, self.y)
 
+    def clone_from_offset(self, x_offset: float = 0.0, y_offset: float = 0.0):
+        """Cria um ponto novo em relação a esse ponto."""
+        return CPoint(self.x + x_offset, self.y + y_offset)
+
+    def clone_from_offset_raw(self, x_offset: float = 0.0, y_offset: float = 0.0) -> tuple[float, float]:
+        return self.x + x_offset, self.y + y_offset
+
 class Position:
     """Funciona do jeito convencional de coordenada.
     Diferente dos outros pontos, este é completamente independente da tela.
@@ -84,7 +91,11 @@ class Position:
     def get_vector(self) -> pygame.Vector2:
         return pygame.Vector2(self.x, self.y)
 
-    def offset(self, x_offset: float, y_offset: float) -> tuple[float, float]:
+    def clone_from_offset(self, x_offset: float = 0.0, y_offset: float = 0.0):
+        """Cria um ponto novo em relação a esse ponto."""
+        return CPoint(self.x + x_offset, self.y + y_offset)
+
+    def clone_from_offset_raw(self, x_offset: float = 0.0, y_offset: float = 0.0) -> tuple[float, float]:
         return self.x + x_offset, self.y + y_offset
 
 def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:

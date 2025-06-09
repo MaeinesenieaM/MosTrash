@@ -123,7 +123,7 @@ class Button(Entity, pygame.sprite.Sprite):
             y = y - (offset / 2 + self.size / 2)
         return pygame.Rect(x, y, self.size + offset, self.size + offset)
 
-    def rects(self, color: Color = Color(175, 175, 175)) -> list[tuple[Rect, Color]]:
+    def rects(self, color: Color = Color(95, 95, 95)) -> list[tuple[Rect, Color]]:
         from pygame import Color
         return [(self._get_outer_rect(), color), (self._get_inner_rect(), Color(43, 164, 43))]
 
