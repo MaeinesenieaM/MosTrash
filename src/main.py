@@ -15,7 +15,6 @@ assets = context.get_assets()
 
 games = mostrash.Games()
 
-
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
 contagem = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
 
@@ -37,7 +36,7 @@ for category_index, category in enumerate(games.get_categories_names()):
     pos_y = -1.0 + (categories_spacing / 2) + (categories_spacing * category_index)
     games_spacing = 2.0 / game_count
 
-    mostrash.Label(CPoint(0.0, pos_y + 0.2), category, size = 48, color = mostrash.GRAY).add(games_buttons)
+    mostrash.Label(CPoint(0.0, pos_y + 0.2), category, size = 48, color = mostrash.WHITE).add(games_buttons)
     for game_index, game_name in enumerate(games.get_games_names(category)):
         pos_x = -1.0 + (games_spacing / 2) + (games_spacing * game_index)
         final_pos = CPoint(pos_x, pos_y)
@@ -68,7 +67,7 @@ while running:
 
     for obj in games_buttons.sprites():
         if isinstance(obj, mostrash.Button):
-            if obj.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]:
+            if obj.has_point(mouse_pos) and mouse_down:
                 sucesso = obj.run_callback()
                 sucesso_img = None
                 if not sucesso: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("carinha_triste"))

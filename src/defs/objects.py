@@ -34,6 +34,7 @@ class Square(Entity, pygame.sprite.Sprite):
         elif isinstance(pos, tuple):
             pos = Position(float(pos[0]), float(pos[1]))
         self.pos = pos
+        return self
 
     def create_rect(self, from_corner = False) -> Rect:
         """Retorna um Rect do Square.
@@ -49,7 +50,7 @@ class Square(Entity, pygame.sprite.Sprite):
             y = y - self.size / 2
         return Rect(x, y, self.size, self.size)
 
-    def create_rect_raster(self, from_corner = False):
+    def create_rect_raster(self, from_corner = False) -> Rect:
         """Retorna um Rect baseado em coordenada rasterizada."""
         from pygame import Rect
 
@@ -91,6 +92,7 @@ class Button(Entity, pygame.sprite.Sprite):
     def set_callback(self, callback: Callable[[], any]):
         """Guarda uma função no botão."""
         self._callback = callback
+        return self
 
     def run_callback(self) -> any:
         """Caso o botão tenha uma função guardada, ira chamá-la e retornar seu resultado."""
@@ -173,10 +175,12 @@ class Label(Position, Entity, pygame.sprite.Sprite):
     def set_text(self, text: str):
         self._text = text
         self._update_text()
+        return self
 
     def set_color(self, color: Color):
         self._color = color
         self._update_text()
+        return self
 
     def _update_text(self):
         self.image = self.font.render(self._text, False, self._color)
