@@ -197,3 +197,7 @@ def play_sound(sound_path: os.PathLike):
     #Eu tenho certeza que isso calça um problema de memória, mas eu não tenho paciência para elaborar
     #algo mais inteligente.
     pygame.mixer.Sound(sound_path).play()
+
+def color_from_bool(state: bool) -> pygame.Color:
+    if state: return pygame.Color(DARK_GREEN)
+    else: return pygame.Color(DARK_RED)

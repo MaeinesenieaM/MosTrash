@@ -2,10 +2,6 @@ import pygame
 import src.mostrash as mostrash
 from src.mostrash import CPoint, RPoint, Position
 
-def color_from_bool(state: bool) -> pygame.Color:
-    if state: return pygame.Color(mostrash.DARK_GREEN)
-    else: return pygame.Color(mostrash.DARK_RED)
-
 def start(context: mostrash.Context):
     window = context.get_window()
     clock = context.get_clock()
@@ -17,7 +13,7 @@ def start(context: mostrash.Context):
 
     sucesso = False
 
-    sucesso_texto = mostrash.Label(CPoint(0.0, -0.5), str(sucesso), size = 16, color = color_from_bool(sucesso))
+    sucesso_texto = mostrash.Label(CPoint(0.0, -0.5), str(sucesso), size = 16, color = mostrash.color_from_bool(sucesso))
     sucesso_texto.add(textos)
     mostrash.Label(CPoint(0.0, 0.0), "socorro", size = 48).add(textos)
 
@@ -41,7 +37,7 @@ def start(context: mostrash.Context):
         for button in buttons:
             if button.has_point(mouse_pos) and mouse_down:
                 sucesso = button.run_callback()
-                sucesso_texto.set_text(str(sucesso)).set_color(color_from_bool(sucesso))
+                sucesso_texto.set_text(str(sucesso)).set_color(mostrash.color_from_bool(sucesso))
             camera.draw(button)
 
         pygame.display.flip()
