@@ -11,23 +11,21 @@ context: mostrash.Context = mostrash.init(700, 600)
 window = context.get_window()
 clock = context.get_clock()
 camera = context.get_camera()
+assets = context.get_assets()
 
 games = mostrash.Games()
-assets = mostrash.Assets()
+
 
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
 contagem = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
 
 mostrash.play_sound(assets.get_sound_path("explosion"))
 
-
 count = 0
 running = True
 
 #Este grupo guarda os objetos para a interface debug dos jogos.
 games_buttons = pygame.sprite.Group()
-
-print(assets.get_image_path("clown"))
 
 #Este código abaixo basicamente cria objetos como botões e textos relacionados a quantos games e categorias
 #está em "games" e guarda eles em games_button para serem usados depois.
@@ -46,6 +44,8 @@ for category_index, category in enumerate(games.get_categories_names()):
         game_function = lambda c = category, n = game_name: games.get_game(c, n)(context)
         mostrash.Button(final_pos, 32, game_function).add(games_buttons)
         mostrash.Label(final_pos.clone_from_offset(y_offset = -0.1), game_name).add(games_buttons)
+
+sucesso = False
 
 while running:
     for event in mostrash.pull_events():
@@ -68,7 +68,14 @@ while running:
 
     for obj in games_buttons.sprites():
         if isinstance(obj, mostrash.Button):
-            if obj.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]: obj.run_callback()
+            if obj.has_point(mouse_pos) and pygame.mouse.get_pressed()[0]:
+                sucesso = obj.run_callback()
+                sucesso_img = None
+                if not sucesso: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("carinha_triste"))
+                else: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))
+
+                sucesso_img.add(games_buttons)
+
         camera.draw(obj)
 
     offset_x, offset_y = camera.get_offset()

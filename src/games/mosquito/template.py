@@ -8,6 +8,7 @@ def start(context: mostrash.Context):
     assets = context.get_assets()
 
     clown: mostrash.Bitmap = mostrash.Bitmap(mostrash.Position(), assets.get_image_path("clown"))
+    mostrash.play_sound(assets.get_sound_path("clown"))
 
     running = True
     while running:
@@ -22,3 +23,5 @@ def start(context: mostrash.Context):
 
         pygame.display.flip()
         clock.tick(60)
+
+    return True
