@@ -68,7 +68,7 @@ class Camera:
         rect.move_ip(offset_x, offset_y)
         pygame.draw.rect(self._display, color, rect)
 
-    def draw(self, obj: Entity, color: pygame.Color | None = None):
+    def draw(self, obj: Entity):
         match obj:
             case Bitmap(image=img, pos=pos) | Label(image=img, pos=pos):
                 #Esta linha calcula o ponto de origem para renderizar a imagem centralizada.
@@ -76,10 +76,7 @@ class Camera:
                 self._display.blit(img, center_pos)
                 return
 
-        if color is None:
-            bodies = obj.rects()
-        else:
-            bodies = obj.rects(color)
+        bodies = obj.rects()
         for body in bodies:
             self.draw_rect(body[0], body[1])
 

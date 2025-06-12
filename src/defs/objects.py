@@ -8,7 +8,7 @@ class Entity:
     """
     from pygame import Color, Rect
 
-    def rects(self, color: Color = Color(175, 175, 175)) -> list[tuple[Rect, Color]]:
+    def rects(self) -> list[tuple[Rect, Color]]:
         """Formata os retângulos de um objeto junto som suas respectivas cores."""
         return []
 
@@ -19,11 +19,12 @@ class Square(Entity, pygame.sprite.Sprite):
     """
     from pygame import Color, Rect
 
-    def __init__(self, pos: Position | RPoint | CPoint, size: float | int):
+    def __init__(self, pos: Position | RPoint | CPoint, size: float | int, color = WHITE):
         pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
         self.pos = pos
+        self.color = color
         self.size = float(size)
 
     def set_pos(self, pos: Position | RPoint | CPoint | tuple[float, float] | tuple[int, int]):
@@ -60,8 +61,8 @@ class Square(Entity, pygame.sprite.Sprite):
             y = y - self.size / 2
         return Rect(x, y, self.size, self.size)
 
-    def rects(self, color: Color = Color(175, 175, 175)) -> list[tuple[Rect, Color]]:
-        return [(self.create_rect(), color)]
+    def rects(self) -> list[tuple[Rect, Color]]:
+        return [(self.create_rect(), self.color)]
 
 class Button(Entity, pygame.sprite.Sprite):
     """
@@ -76,6 +77,7 @@ class Button(Entity, pygame.sprite.Sprite):
         pos: Position | RPoint | CPoint,
         size: float | int,
         callback: Callable[..., any] = None,
+        color = GRAY
     ):
         from collections.abc import Callable
         pygame.sprite.Sprite.__init__(self)
@@ -83,6 +85,7 @@ class Button(Entity, pygame.sprite.Sprite):
             pos = pos.to_position()
         self.pos = pos
         self.size = float(size)
+        self.color = color
         self._callback: Callable[[], any] | None = callback
 
     def set_callback(self, callback: Callable[[], any]):
@@ -123,9 +126,9 @@ class Button(Entity, pygame.sprite.Sprite):
             y = y - (offset / 2 + self.size / 2)
         return pygame.Rect(x, y, self.size + offset, self.size + offset)
 
-    def rects(self, color: Color = Color(95, 95, 95)) -> list[tuple[Rect, Color]]:
+    def rects(self) -> list[tuple[Rect, Color]]:
         from pygame import Color
-        return [(self._get_outer_rect(), color), (self._get_inner_rect(), Color(43, 164, 43))]
+        return [(self._get_outer_rect(), self.color), (self._get_inner_rect(), Color(43, 164, 43))]
 
 class Bitmap(Entity, pygame.sprite.Sprite):
     from os import PathLike
