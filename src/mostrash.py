@@ -63,6 +63,11 @@ class Camera:
         pos_x, pos_y = pos.get_tuple()
         return Position(pos_x + offset_x, pos_y + offset_y).to_raster_raw()
 
+    def apply_offset_rect(self, rect: pygame.Rect):
+        offset_x, offset_y = self.get_raster_offset()
+        rect.move_ip(offset_x, offset_y)
+        return rect
+
     def draw_rect(self, rect: pygame.Rect, color: pygame.Color):
         offset_x, offset_y = self.get_raster_offset()
         rect.move_ip(offset_x, offset_y)
@@ -75,6 +80,15 @@ class Camera:
                 center_pos = [a - (b / 2) for a, b in zip(self.apply_offset(pos), img.get_size())]
                 self._display.blit(img, center_pos)
                 return
+            case Button(bitmap=bit, pos=pos):
+                if not bit is None:
+                    center_pos = [a - (b / 2) for a, b in zip(self.apply_offset(pos), bit.image.get_size())]
+                    self._display.blit(bit.image, center_pos)
+                    return
+
+                bodies = obj.rects()
+                for body in bodies:
+                    self.draw_rect(body[0], body[1])
 
         bodies = obj.rects()
         for body in bodies:

@@ -12,6 +12,21 @@ class Entity:
         """Formata os retângulos de um objeto junto som suas respectivas cores."""
         return []
 
+class Bitmap(Entity, pygame.sprite.Sprite):
+    from os import PathLike
+
+    def __init__(
+        self,
+        pos: Position | RPoint | CPoint,
+        image_path: PathLike
+    ):
+        pygame.sprite.Sprite.__init__(self)
+        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
+            pos = pos.to_position()
+
+        self.pos = pos
+        self.image = pygame.image.load(image_path).convert_alpha()
+
 class Square(Entity, pygame.sprite.Sprite):
     """
     Diferente de um Rect comum, Square é um objeto dinâmico que muda de acordo com seus dados;
@@ -78,7 +93,8 @@ class Button(Entity, pygame.sprite.Sprite):
         pos: Position | RPoint | CPoint,
         size: float | int,
         callback: Callable[..., any] = None,
-        color = GRAY
+        color = GRAY,
+        bitmap: Bitmap = None
     ):
         from collections.abc import Callable
         pygame.sprite.Sprite.__init__(self)
@@ -87,6 +103,7 @@ class Button(Entity, pygame.sprite.Sprite):
         self.pos = pos
         self.size = float(size)
         self.color = color
+        self.bitmap = bitmap
         self._callback: Callable[[], any] | None = callback
 
     def set_callback(self, callback: Callable[[], any]):
@@ -131,21 +148,6 @@ class Button(Entity, pygame.sprite.Sprite):
     def rects(self) -> list[tuple[Rect, Color]]:
         from pygame import Color
         return [(self._get_outer_rect(), self.color), (self._get_inner_rect(), Color(43, 164, 43))]
-
-class Bitmap(Entity, pygame.sprite.Sprite):
-    from os import PathLike
-
-    def __init__(
-        self,
-        pos: Position | RPoint | CPoint,
-        image_path: PathLike
-    ):
-        pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
-            pos = pos.to_position()
-
-        self.pos = pos
-        self.image = pygame.image.load(image_path).convert_alpha()
 
 class Label(Position, Entity, pygame.sprite.Sprite):
     from os import PathLike

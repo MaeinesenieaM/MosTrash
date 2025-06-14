@@ -5,6 +5,8 @@ from src.mostrash import IntRef, FloatRef, BoolRef
 
 import random
 
+#Basicamente um Papers Please de mosquito simple, só que nenhum mosquito sera perdoado.
+
 def start(context: mostrash.Context):
     window = context.get_window()
     clock = context.get_clock()

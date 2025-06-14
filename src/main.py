@@ -41,6 +41,7 @@ for category_index, category in enumerate(games.get_categories_names()):
         pos_x = -1.0 + (games_spacing / 2) + (games_spacing * game_index)
         final_pos = CPoint(pos_x, pos_y)
         game_function = lambda c = category, n = game_name: games.get_game(c, n)(context)
+
         mostrash.Button(final_pos, 32, game_function).add(games_buttons)
         mostrash.Label(final_pos.clone_from_offset(y_offset = -0.1), game_name).add(games_buttons)
 
