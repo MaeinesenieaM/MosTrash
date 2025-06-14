@@ -189,6 +189,21 @@ def has_key_released(key: str) -> bool:
     keycode = get_key(key)
     return keycode in _event_manager.inputs.keys_released
 
+def has_mouse_moved() -> bool:
+    if not _event_manager.inputs.mouse_moved: return False
+    else: return True
+
+def has_mouse_pressed(button: int):
+    if not _event_manager.inputs.mouse_pressed: return False
+    return button in _event_manager.inputs.mouse_pressed[0]
+
+def has_mouse_released(button: int):
+    if not _event_manager.inputs.mouse_released: return False
+    return button in _event_manager.inputs.mouse_released[0]
+
+def get_mouse_pos() -> Position:
+    return to_position(pygame.mouse.get_pos())
+
 def get_event(event_id: int) -> pygame.event.Event:
     """Recebe uma classe de Event que pode ser usada para ser enviada com o pygame.event.post()"""
     return pygame.event.Event(event_id)

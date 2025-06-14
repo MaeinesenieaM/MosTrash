@@ -22,6 +22,7 @@ def start(context: mostrash.Context):
 
     escolha_texto = mostrash.Label(CPoint(0.0, -0.5), str(escolha), size = 16, color = mostrash.color_from_bool(sucesso))
     escolha_texto.add(textos)
+
     mostrash.Label(CPoint(0.0, 0.75), "Isso é o numero 1?", size = 48).add(textos)
     mostrash.Label(CPoint(0.0, 0.0), str(temp_numero), size = 32).add(textos)
 
@@ -36,23 +37,25 @@ def start(context: mostrash.Context):
         for event in mostrash.pull_events():
             match event.type:
                 case pygame.QUIT: running.set(False)
+
         window.fill(mostrash.BLACK)
 
         mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
         mouse_down = pygame.mouse.get_pressed()[0]
 
         if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
+        if mostrash.has_mouse_released(1):
+            for button in buttons:
+                if button.has_point(mostrash.get_mouse_pos()):
+                    resultado = button.run_callback()
+                    if isinstance(resultado, bool):
+                        escolha = resultado
+                        escolha_texto.set_text(str(escolha)).set_color(mostrash.color_from_bool(escolha))
 
+        #Desenha os objetos.
         for text in textos:
             camera.draw(text)
-
         for button in buttons:
-            if button.has_point(mouse_pos) and mouse_down:
-                resultado = button.run_callback()
-                if isinstance(resultado, bool):
-                    escolha = resultado
-                    escolha_texto.set_text(str(escolha)).set_color(mostrash.color_from_bool(escolha))
-
             camera.draw(button)
 
         pygame.display.flip()

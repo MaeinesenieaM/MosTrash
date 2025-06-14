@@ -8,7 +8,7 @@ class Reference:
     def set(self, value): pass
     def get(self) -> any: pass
     def as_str(self) -> str: pass
-    def compare(self, other): pass
+    def compare(self, other) -> bool: pass
 
     def __eq__(self, other):
         return self.compare(other)
@@ -30,7 +30,7 @@ class BoolRef(Reference):
     def get(self):
         return self.state
 
-    def compare(self, other_state: bool | Reference):
+    def compare(self, other_state: bool | Reference) -> bool:
         if isinstance(other_state, Reference): other_state = bool(other_state.get())
         return self.state == other_state
 
@@ -54,7 +54,7 @@ class IntRef(Reference):
     def get(self) -> int:
         return self.value
 
-    def compare(self, other_value: int | Reference):
+    def compare(self, other_value: int | Reference) -> bool:
         if isinstance(other_value, Reference): other_value = int(other_value.get())
         return self.value == other_value
 
