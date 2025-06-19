@@ -1,10 +1,55 @@
 import pygame
 
-class RPoint:
+class Point:
+    def __init__(self):
+        self.x = None
+        self.y = None
+
+    # +=
+    def __iadd__(self, other):
+        self.x += other.x
+        self.y += other.y
+
+    # -=
+    def __isub__(self, other):
+        self.x -= other.x
+        self.y -= other.y
+
+    # *=
+    def __imul__(self, other):
+        self.x *= other.x
+        self.y *= other.y
+
+    ## ==
+    #def __eq__(self, other):
+    #    return self.x == other.y and self.y == other.y
+#
+    ## !=
+    #def __ne__(self, other):
+    #    return self.x != other.y and self.y != other.y
+
+    # <
+    def __lt__(self, other):
+        return self.x < other.y and self.y < other.y
+
+    # <=
+    def __le__(self, other):
+        return self.x <= other.y and self.y <= other.y
+
+    # >
+    def __gt__(self, other):
+        return self.x > other.y and self.y > other.y
+
+    # >=
+    def __ge__(self, other):
+        return self.x <= other.y and self.y <= other.y
+
+class RPoint(Point):
     """Ponto Raster baseado em coordenadas da tela do programa.
     (0, 0) seria o canto superior esquerdo da tela neste caso.
     """
     def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
+        Point.__init__(self)
         self.x = float(x)
         self.y = float(y)
 
@@ -29,11 +74,40 @@ class RPoint:
     def get_vector(self) -> pygame.Vector2:
         return pygame.Vector2(self.x, self.y)
 
-class CPoint:
+    # +
+    def __add__(self, other):
+        if not self.x or not self.y:
+            return RPoint(self.x + other, self.y + other)
+        else:
+            return RPoint(self.x + other.x, self.y + other.y)
+
+    # -
+    def __sub__(self, other):
+        if not self.x or not self.y:
+            return RPoint(self.x - other, self.y - other)
+        else:
+            return RPoint(self.x - other.x, self.y - other.y)
+
+    # *
+    def __mul__(self, other):
+        if not self.x or not self.y:
+            return RPoint(self.x * other, self.y * other)
+        else:
+            return RPoint(self.x * other.x, self.y * other.y)
+
+    # /
+    def __truediv__(self, other):
+        if not self.x or not self.y:
+            return RPoint(self.x / other, self.y / other)
+        else:
+            return RPoint(self.x / other.x, self.y / other.y)
+
+class CPoint(Point):
     """Ponto Cartesiano, vai de −1,0 a 1,0 conforme o canto da tela.
     (1.0, 0.0) seria o centro do canto direito da tela.
     """
     def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
+        Point.__init__(self)
         x = float(x)
         y = float(y)
         self.x = ((x + 1) % 2) - 1 #Formula complicada para limitar o valor entre -1,0 e 1,0.
@@ -74,12 +148,41 @@ class CPoint:
     def clone_from_offset_raw(self, x_offset: float = 0.0, y_offset: float = 0.0) -> tuple[float, float]:
         return self.x + x_offset, self.y + y_offset
 
-class Position:
+    # +
+    def __add__(self, other):
+        if not self.x or not self.y:
+            return CPoint(self.x + other, self.y + other)
+        else:
+            return CPoint(self.x + other.x, self.y + other.y)
+
+    # -
+    def __sub__(self, other):
+        if not self.x or not self.y:
+            return CPoint(self.x - other, self.y - other)
+        else:
+            return CPoint(self.x - other.x, self.y - other.y)
+
+    # *
+    def __mul__(self, other):
+        if not self.x or not self.y:
+            return CPoint(self.x * other, self.y * other)
+        else:
+            return CPoint(self.x * other.x, self.y * other.y)
+
+    # /
+    def __truediv__(self, other):
+        if not self.x or not self.y:
+            return CPoint(self.x / other, self.y / other)
+        else:
+            return CPoint(self.x / other.x, self.y / other.y)
+
+class Position(Point):
     """Funciona do jeito convencional de coordenada.
     Diferente dos outros pontos, este é completamente independente da tela.
     Normalmente usado em conjunto com a camera.
     """
     def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
+        Point.__init__(self)
         self.x = float(x)
         self.y = float(y)
 
@@ -114,6 +217,34 @@ class Position:
 
     def clone_from_offset_raw(self, x_offset: float = 0.0, y_offset: float = 0.0) -> tuple[float, float]:
         return self.x + x_offset, self.y + y_offset
+
+    # +
+    def __add__(self, other):
+        if not self.x or not self.y:
+            return Position(self.x + other, self.y + other)
+        else:
+            return Position(self.x + other.x, self.y + other.y)
+
+    # -
+    def __sub__(self, other):
+        if not self.x or not self.y:
+            return Position(self.x - other, self.y - other)
+        else:
+            return Position(self.x - other.x, self.y - other.y)
+
+    # *
+    def __mul__(self, other):
+        if not self.x or not self.y:
+            return Position(self.x * other, self.y * other)
+        else:
+            return Position(self.x * other.x, self.y * other.y)
+
+    # /
+    def __truediv__(self, other):
+        if not self.x or not self.y:
+            return Position(self.x / other, self.y / other)
+        else:
+            return Position(self.x / other.x, self.y / other.y)
 
 def raster_to_cartesian(raster_point: RPoint | tuple[float, float] | tuple[int, int]) -> CPoint:
     """Converte RPoint, para CPoint."""

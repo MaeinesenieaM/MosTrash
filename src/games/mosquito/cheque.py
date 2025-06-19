@@ -1,6 +1,7 @@
+from os import PathLike
+
 import pygame
 import src.mostrash as mostrash
-from src.defs.objects import Bitmap
 from src.mostrash import CPoint, RPoint, Position
 from src.mostrash import IntRef, FloatRef, BoolRef
 
@@ -17,12 +18,11 @@ class Mosquito:
 
     def get_image(self):
         return self.image
+
 #Eu sei que as funções abaixo são preguiçosas, mas eu real não tenho tempo.
 def mosquito_cheque(mosquito: list, estado: bool):
     return mosquito[1] is estado
 
-def pegar_imagem(mosquito: list, index: int):
-    pass
 def start(context: mostrash.Context):
     window = context.get_window()
     clock = context.get_clock()
@@ -31,22 +31,16 @@ def start(context: mostrash.Context):
 
     textos = pygame.sprite.Group()
     buttons = pygame.sprite.Group()
-    vida_sprites = pygame.sprite.Group()
 
     sucesso = False
 
-    vida = 5
+    vida = mostrash.BitmapChain(
+        CPoint(-0.8, 0.8),
+        CPoint(0.15, 0),
+        5,
+        assets.get_image_path("heart"))
     tentativa = 0
     mosquito_index = 0
-
-    for _ in range(vida):
-        x = -0.80 + 0.15 * len(vida_sprites)
-        image_path = assets.get_image_path("carinha_triste")
-        mostrash.Bitmap(CPoint(x, 0.8), image_path).add(vida_sprites)
-
-
-    vida_texto = mostrash.Label(CPoint(0.0, -0.5), str(vida), size = 32)
-    vida_texto.add(textos)
 
     mosquitos: list[Mosquito] = [
         Mosquito(True, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))),
@@ -56,7 +50,7 @@ def start(context: mostrash.Context):
     #escolha_texto = mostrash.Label(CPoint(0.0, -0.5), str(escolha), size = 16, color = mostrash.color_from_bool(sucesso))
     #escolha_texto.add(textos)
 
-    mostrash.Label(CPoint(0.0, 0.75), "Isso é o mosquito dengue?", size = 48).add(textos)
+    mostrash.Label(CPoint(0.0, -0.70), "Isso é o mosquito dengue?", size = 32).add(textos)
 
     mostrash.Button(
         CPoint(-0.5, -0.5),
@@ -93,14 +87,10 @@ def start(context: mostrash.Context):
 
         if escolha is not None:
             if escolha: tentativa += 1
-            else:
-                vida -= 1
-                vida_texto.set_text(str(vida))
+            else: vida -= 1
 
             mosquito_index = rolar_mosquito(len(mosquitos))
             escolha = None
-
-        print(vida)
 
         if vida <= 0:
             sucesso = False
@@ -115,8 +105,8 @@ def start(context: mostrash.Context):
         #Apartir daqui está as funções para desenhar na janela.
         window.fill(mostrash.BLACK)
 
-        for imagens in vida_sprites:
-            camera.draw(imagens)
+        for sprite in vida.get_sprites():
+            camera.draw(sprite)
         for text in textos:
             camera.draw(text)
         for button in buttons:

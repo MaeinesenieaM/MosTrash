@@ -21,14 +21,80 @@ class Bitmap(Entity, pygame.sprite.Sprite):
         image_path: PathLike
     ):
         pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, tuple):
-            pos = Position(pos[0], pos[1])
+        if isinstance(pos, tuple):pos = Position(pos[0], pos[1])
 
         self.pos = pos
         self.image = pygame.image.load(image_path).convert_alpha()
 
     def set_image(self, image_path: PathLike):
         self.image = pygame.image.load(image_path).convert_alpha()
+
+class BitmapChain:
+    from os import PathLike
+
+    def __init__(
+        self,
+        pos: Position | RPoint | CPoint | tuple[int, int],
+        offset_pos: Position | RPoint | CPoint | tuple[int, int],
+        quantity: int,
+        image_path: PathLike
+    ):
+        if isinstance(pos, tuple): pos = Position(pos[0], pos[1])
+        if isinstance(offset_pos, tuple): offset_pos = Position(offset_pos[0], offset_pos[1])
+
+        self.pos = pos
+        self.offset_pos = offset_pos
+
+        self.quantity = quantity
+        self._image_path = image_path
+        self._sprites: [Bitmap] = []
+
+        for _ in range(self.quantity):
+            self._sprites.append(Bitmap(self.pos + self.offset_pos * len(self._sprites), self._image_path))
+
+    def get_sprites(self) -> list[Bitmap]:
+        return self._sprites
+
+    def __int__(self):
+        return self.quantity
+
+    def __sub__(self, other: int):
+        return self.quantity - other
+
+    def __add__(self, other: int):
+        return self.quantity + other
+
+    def __isub__(self, other: int):
+        for _ in range(other):
+            self._sprites.pop()
+
+        self.quantity -= other
+        return self
+
+    def __iadd__(self, other: int):
+        for _ in range(other):
+            self._sprites.append(Bitmap(self.pos + self.offset_pos * len(self._sprites), self._image_path))
+
+        self.quantity += other
+        return self
+
+    def __eq__(self, other: int):
+        return self.quantity == other
+
+    def __ne__(self, other: int):
+        return self.quantity != other
+
+    def __lt__(self, other: int):
+        return self.quantity < other
+
+    def __le__(self, other: int):
+        return self.quantity <= other
+
+    def __gt__(self, other: int):
+        return self.quantity > other
+
+    def __ge__(self, other: int):
+        return self.quantity >= other
 
 class Label(Position, Entity, pygame.sprite.Sprite):
     from os import PathLike
@@ -43,8 +109,7 @@ class Label(Position, Entity, pygame.sprite.Sprite):
         color: Color = WHITE
     ):
         pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, tuple):
-            pos = Position(pos[0], pos[1])
+        if isinstance(pos, tuple): pos = Position(pos[0], pos[1])
 
         self.pos = pos
         self._text = text
@@ -77,8 +142,8 @@ class Square(Entity, pygame.sprite.Sprite):
 
     def __init__(self, pos: Position | RPoint | CPoint, size: float | int, color = WHITE):
         pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
-            pos = pos.to_position()
+        if isinstance(pos, CPoint) or isinstance(pos, RPoint): pos = pos.to_position()
+
         self.pos = pos
         self.color = color
         self.size = float(size)
