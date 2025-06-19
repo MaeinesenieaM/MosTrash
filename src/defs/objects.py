@@ -91,7 +91,7 @@ class Button(Entity, pygame.sprite.Sprite):
     Para incluir uma função no botão utilize set_callback().
     """
     from pygame import Color, Rect
-    from collections.abc import Callable
+    from typing import Callable
 
     def __init__(
         self,

@@ -1,9 +1,45 @@
 import pygame
+from typing import Callable
+
+class Timer(pygame.sprite.Sprite):
+    def __init__(
+        self,
+        milliseconds: int,
+        clock: pygame.time.Clock,
+        start: Callable[..., None] = None,
+        perform: Callable[..., None] = None,
+        end: Callable[..., None] = None
+    ):
+        pygame.sprite.Sprite.__init__(self)
+
+        self._milliseconds = milliseconds
+        self._clock = clock
+        self._perform = perform
+        self._end = end
+
+        if start: start()
+
+    def run_perform(self) -> None:
+        """Caso o botão tenha uma função guardada, ira chamá-la e retornar seu resultado."""
+        if self._perform: self._perform()
+
+    def run_end(self) -> None:
+        if self._end: self._end()
+
+    def update(self):
+        self._milliseconds -= self._clock.get_time()
+
+        if self._milliseconds <= 0:
+            self.run_end()
+            self.kill()
+            return
+
+        self.run_perform()
 
 class InputHandler:
     """
-    Essa classe é responsável por organizar os inputs do teclado,
-    sem ela seria complicado usar o teclado.
+    Essa classe é responsável por organizar os inputs do teclado e mouse,
+    sem ela seria complicado usar o teclado ou mouse.
     """
     def __init__(self):
         self.keys_pressed = []
@@ -54,6 +90,7 @@ class EventManager:
     """
     def __init__(self):
         self.inputs = InputHandler()
+        self.timers = pygame.sprite.Group()
 
     def pull_events(self) -> list:
         """
@@ -62,5 +99,9 @@ class EventManager:
         events = pygame.event.get()
 
         self.inputs.update(events)
+        for timer in self.timers: timer.update()
 
         return events
+
+    def add_timer(self, timer: Timer):
+        timer.add(self.timers)

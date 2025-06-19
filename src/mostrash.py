@@ -230,3 +230,12 @@ def play_sound(sound_path: os.PathLike):
 def color_from_bool(state: bool) -> pygame.Color:
     if state: return pygame.Color(DARK_GREEN)
     else: return pygame.Color(DARK_RED)
+
+def create_timer(
+    milliseconds: int,
+    clock: pygame.time.Clock,
+    start: Callable[..., None] = None,
+    perform: Callable[..., None] = None,
+    end: Callable[..., None] = None
+):
+    _event_manager.add_timer(Timer(milliseconds, clock, start, perform, end))

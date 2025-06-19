@@ -58,7 +58,6 @@ while running:
 
     mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
     mouse_down = pygame.mouse.get_pressed()[0]
-
     count += 1
 
     contagem.set_text(str(count))
