@@ -1,5 +1,6 @@
 import pygame
 import src.mostrash as mostrash
+from src.defs.objects import Bitmap
 from src.mostrash import CPoint, RPoint, Position
 from src.mostrash import IntRef, FloatRef, BoolRef
 
@@ -30,12 +31,19 @@ def start(context: mostrash.Context):
 
     textos = pygame.sprite.Group()
     buttons = pygame.sprite.Group()
+    vida_sprites = pygame.sprite.Group()
 
     sucesso = False
 
-    vida = 3
+    vida = 5
     tentativa = 0
     mosquito_index = 0
+
+    for _ in range(vida):
+        x = -0.80 + 0.15 * len(vida_sprites)
+        image_path = assets.get_image_path("carinha_triste")
+        mostrash.Bitmap(CPoint(x, 0.8), image_path).add(vida_sprites)
+
 
     vida_texto = mostrash.Label(CPoint(0.0, -0.5), str(vida), size = 32)
     vida_texto.add(textos)
@@ -111,6 +119,8 @@ def start(context: mostrash.Context):
             camera.draw(text)
         for button in buttons:
             camera.draw(button)
+        for imagens in vida_sprites:
+            camera.draw(imagens)
 
         camera.draw(mosquitos[mosquito_index].image)
 

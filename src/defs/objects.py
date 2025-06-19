@@ -21,9 +21,7 @@ class Bitmap(Entity, pygame.sprite.Sprite):
         image_path: PathLike
     ):
         pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
-            pos = pos.to_position()
-        elif isinstance(pos, tuple):
+        if isinstance(pos, tuple):
             pos = Position(pos[0], pos[1])
 
         self.pos = pos
@@ -31,6 +29,44 @@ class Bitmap(Entity, pygame.sprite.Sprite):
 
     def set_image(self, image_path: PathLike):
         self.image = pygame.image.load(image_path).convert_alpha()
+
+class Label(Position, Entity, pygame.sprite.Sprite):
+    from os import PathLike
+    from pygame import Color
+
+    def __init__(
+        self,
+        pos: Position | RPoint | CPoint | tuple[int, int],
+        text: str,
+        font: PathLike = Assets().get_font_path("fixedsys"),
+        size: int = 16,
+        color: Color = WHITE
+    ):
+        pygame.sprite.Sprite.__init__(self)
+        if isinstance(pos, tuple):
+            pos = Position(pos[0], pos[1])
+
+        self.pos = pos
+        self._text = text
+        self.font = pygame.font.Font(font, size)
+        self._color = color
+        self.image = self.font.render(self._text, False, self._color)
+
+    def get_text(self) -> str:
+        return self._text
+
+    def set_text(self, text: str):
+        self._text = text
+        self._update_text()
+        return self
+
+    def set_color(self, color: Color):
+        self._color = color
+        self._update_text()
+        return self
+
+    def _update_text(self):
+        self.image = self.font.render(self._text, False, self._color)
 
 class Square(Entity, pygame.sprite.Sprite):
     """
@@ -95,7 +131,7 @@ class Button(Entity, pygame.sprite.Sprite):
 
     def __init__(
         self,
-        pos: Position | RPoint | CPoint,
+        pos: Position | RPoint | CPoint | tuple[int, int],
         size: float | int,
         callback: Callable[..., any] = None,
         color = GRAY,
@@ -103,8 +139,11 @@ class Button(Entity, pygame.sprite.Sprite):
     ):
         from collections.abc import Callable
         pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
+        if isinstance(pos, RPoint):
             pos = pos.to_position()
+        if isinstance(pos, tuple):
+            pos = Position(pos[0], pos[1])
+
         self.pos = pos
         self.size = float(size)
         self.color = color
@@ -125,26 +164,31 @@ class Button(Entity, pygame.sprite.Sprite):
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
 
+        if isinstance(self.pos, CPoint): temp_pos = self.pos.to_position()
+        else: temp_pos = self.pos
+
         inner_size = self.size / 2
-        inside_x = self.pos.x - inner_size < pos.x < self.pos.x + inner_size
-        inside_y = self.pos.y - inner_size < pos.y < self.pos.y + inner_size
+        inside_x = temp_pos.x - inner_size < pos.x < temp_pos.x + inner_size
+        inside_y = temp_pos.y - inner_size < pos.y < temp_pos.y + inner_size
 
         return inside_x and inside_y
 
     def _get_inner_rect(self, from_corner = False) -> Rect:
-        #raster_pos = self._pos.to_raster()
-        x = self.pos.x
-        y = -self.pos.y
+        if isinstance(self.pos, CPoint): temp_pos = self.pos.to_position()
+        else: temp_pos = self.pos
+        x = temp_pos.x
+        y = -temp_pos.y
         if not from_corner:
             x = x - self.size / 2
             y = y - self.size / 2
         return pygame.Rect(x, y, self.size, self.size)
 
     def _get_outer_rect(self, from_corner = False) -> Rect:
-        #raster_pos = self._pos.to_raster()
+        if isinstance(self.pos, CPoint): temp_pos = self.pos.to_position()
+        else: temp_pos = self.pos
         offset = self.size / 2
-        x = self.pos.x
-        y = -self.pos.y
+        x = temp_pos.x
+        y = -temp_pos.y
         if not from_corner:
             x = x - (offset / 2 + self.size / 2)
             y = y - (offset / 2 + self.size / 2)
@@ -153,41 +197,3 @@ class Button(Entity, pygame.sprite.Sprite):
     def rects(self) -> list[tuple[Rect, Color]]:
         from pygame import Color
         return [(self._get_outer_rect(), self.color), (self._get_inner_rect(), Color(43, 164, 43))]
-
-class Label(Position, Entity, pygame.sprite.Sprite):
-    from os import PathLike
-    from pygame import Color
-
-    def __init__(
-        self,
-        pos: Position | RPoint | CPoint,
-        text: str,
-        font: PathLike = Assets().get_font_path("fixedsys"),
-        size: int = 16,
-        color: Color = WHITE
-    ):
-        pygame.sprite.Sprite.__init__(self)
-        if isinstance(pos, CPoint) or isinstance(pos, RPoint):
-            pos = pos.to_position()
-
-        self.pos = pos
-        self._text = text
-        self.font = pygame.font.Font(font, size)
-        self._color = color
-        self.image = self.font.render(self._text, False, self._color)
-
-    def get_text(self) -> str:
-        return self._text
-
-    def set_text(self, text: str):
-        self._text = text
-        self._update_text()
-        return self
-
-    def set_color(self, color: Color):
-        self._color = color
-        self._update_text()
-        return self
-
-    def _update_text(self):
-        self.image = self.font.render(self._text, False, self._color)

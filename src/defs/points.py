@@ -15,6 +15,14 @@ class RPoint:
         window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
         return Position(self.x - window_x_center, -self.y + window_y_center)
 
+    def to_cartesian(self):
+        import pygame
+
+        window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
+        cart_x = (self.x - window_x_center) / window_x_center
+        cart_y = (window_y_center - self.y) / window_y_center
+        return CPoint(cart_x, cart_y)
+
     def get_tuple(self) -> tuple[float, float]:
         return self.x, self.y
 
@@ -75,7 +83,6 @@ class Position:
         self.x = float(x)
         self.y = float(y)
 
-
     def to_raster(self) -> RPoint:
         """Converte Position, paa RPoint"""
         width, height = pygame.display.get_window_size()
@@ -84,6 +91,16 @@ class Position:
     def to_raster_raw(self) -> tuple[float, float]:
         width, height = pygame.display.get_window_size()
         return width / 2 + self.x, height / 2 - self.y
+
+    def to_cartesian(self):
+        import pygame
+
+        window_x_center, window_y_center = map(lambda val: val / 2, pygame.display.get_window_size())
+        x = window_x_center + self.x
+        y = window_y_center - self.y
+        cart_x = (self.x - window_x_center) / window_x_center
+        cart_y = (window_y_center - self.y) / window_y_center
+        return CPoint(cart_x, cart_y)
 
     def get_tuple(self) -> tuple[float, float]:
         return self.x, self.y

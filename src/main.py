@@ -18,7 +18,7 @@ games = mostrash.Games()
 image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
 contagem = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
 
-mostrash.play_sound(assets.get_sound_path("explosion"))
+#mostrash.play_sound(assets.get_sound_path("explosion"))
 
 count = 0
 running = True

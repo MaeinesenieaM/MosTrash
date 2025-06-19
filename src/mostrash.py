@@ -58,7 +58,10 @@ class Camera:
     def get_raster_offset(self) -> tuple[float, float]:
         return self.pos.to_raster_raw()
 
-    def apply_offset(self, pos: Position) -> tuple[float, float]:
+    def apply_offset(self, pos: Position | RPoint | CPoint) -> tuple[float, float]:
+        if isinstance(pos, RPoint) or isinstance(pos, CPoint):
+            pos = pos.to_position()
+
         offset_x, offset_y = self.get_offset()
         pos_x, pos_y = pos.get_tuple()
         return Position(pos_x + offset_x, pos_y + offset_y).to_raster_raw()
