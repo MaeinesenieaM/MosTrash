@@ -12,7 +12,7 @@ def start(context: mostrash.Context):
                 case pygame.QUIT: running = False
 
         window.fill([0, 0, 240])
-        if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
+        if mostrash.has_key_released("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
         pygame.display.flip()
         clock.tick(60)

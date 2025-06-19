@@ -85,7 +85,7 @@ def start(context: mostrash.Context):
         escolha: bool | None = None
 
         #Checka pelos Inputs do usuário.
-        if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
+        if mostrash.has_key_released("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
         if mostrash.has_mouse_released(1):
             for button in buttons:
                 if button.has_point(mouse_pos):
@@ -115,12 +115,12 @@ def start(context: mostrash.Context):
         #Apartir daqui está as funções para desenhar na janela.
         window.fill(mostrash.BLACK)
 
+        for imagens in vida_sprites:
+            camera.draw(imagens)
         for text in textos:
             camera.draw(text)
         for button in buttons:
             camera.draw(button)
-        for imagens in vida_sprites:
-            camera.draw(imagens)
 
         camera.draw(mosquitos[mosquito_index].image)
 

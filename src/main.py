@@ -79,7 +79,7 @@ while running:
 
     offset_x, offset_y = camera.get_offset()
 
-    if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
+    if mostrash.has_key_released("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
     #camera.pos.y += 0.005
     pygame.display.flip()

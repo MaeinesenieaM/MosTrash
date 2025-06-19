@@ -17,7 +17,7 @@ def start(context: mostrash.Context):
                 case pygame.QUIT: running = False
 
         window.fill(mostrash.BLACK)
-        if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
+        if mostrash.has_key_released("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
         camera.draw(clown)
 
