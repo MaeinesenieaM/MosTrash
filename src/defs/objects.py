@@ -17,14 +17,19 @@ class Bitmap(Entity, pygame.sprite.Sprite):
 
     def __init__(
         self,
-        pos: Position | RPoint | CPoint,
+        pos: Position | RPoint | CPoint | tuple[int, int],
         image_path: PathLike
     ):
         pygame.sprite.Sprite.__init__(self)
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):
             pos = pos.to_position()
+        elif isinstance(pos, tuple):
+            pos = Position(pos[0], pos[1])
 
         self.pos = pos
+        self.image = pygame.image.load(image_path).convert_alpha()
+
+    def set_image(self, image_path: PathLike):
         self.image = pygame.image.load(image_path).convert_alpha()
 
 class Square(Entity, pygame.sprite.Sprite):

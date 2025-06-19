@@ -5,8 +5,23 @@ from src.mostrash import IntRef, FloatRef, BoolRef
 
 import random
 
-#Basicamente um Papers Please de mosquito simple, só que nenhum mosquito sera perdoado.
+#Basicamente um Papers Please de mosquito simples, só que nenhum mosquito será perdoado.
+def rolar_mosquito(largura: int):
+    return random.randint(0, largura - 1)
 
+class Mosquito:
+    def __init__(self, real: bool, image: mostrash.Bitmap | None = None):
+        self.image: mostrash.Bitmap | None = image
+        self.real = real
+
+    def get_image(self):
+        return self.image
+#Eu sei que as funções abaixo são preguiçosas, mas eu real não tenho tempo.
+def mosquito_cheque(mosquito: list, estado: bool):
+    return mosquito[1] is estado
+
+def pegar_imagem(mosquito: list, index: int):
+    pass
 def start(context: mostrash.Context):
     window = context.get_window()
     clock = context.get_clock()
@@ -17,19 +32,36 @@ def start(context: mostrash.Context):
     buttons = pygame.sprite.Group()
 
     sucesso = False
-    escolha = False
 
-    temp_numero = random.randint(1, 3)
-    dengue_certa = temp_numero == 1
+    vida = 3
+    tentativa = 0
+    mosquito_index = 0
 
-    escolha_texto = mostrash.Label(CPoint(0.0, -0.5), str(escolha), size = 16, color = mostrash.color_from_bool(sucesso))
-    escolha_texto.add(textos)
+    vida_texto = mostrash.Label(CPoint(0.0, -0.5), str(vida), size = 32)
+    vida_texto.add(textos)
 
-    mostrash.Label(CPoint(0.0, 0.75), "Isso é o numero 1?", size = 48).add(textos)
-    mostrash.Label(CPoint(0.0, 0.0), str(temp_numero), size = 32).add(textos)
+    mosquitos: list[Mosquito] = [
+        Mosquito(True, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))),
+        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_triste")))
+    ]
 
-    mostrash.Button(CPoint(-0.5, -0.5), 32, lambda: False, mostrash.DARK_RED).add(buttons)
-    mostrash.Button(CPoint(0.5, -0.5), 32, lambda: True, mostrash.DARK_GREEN).add(buttons)
+    #escolha_texto = mostrash.Label(CPoint(0.0, -0.5), str(escolha), size = 16, color = mostrash.color_from_bool(sucesso))
+    #escolha_texto.add(textos)
+
+    mostrash.Label(CPoint(0.0, 0.75), "Isso é o mosquito dengue?", size = 48).add(textos)
+
+    mostrash.Button(
+        CPoint(-0.5, -0.5),
+        32,
+        lambda: mosquitos[mosquito_index].real == False,
+        mostrash.DARK_RED
+    ).add(buttons)
+    mostrash.Button(
+        CPoint(0.5, -0.5),
+        32,
+        lambda: mosquitos[mosquito_index].real == True,
+        mostrash.DARK_GREEN
+    ).add(buttons)
 
     running = BoolRef(True)
 
@@ -40,29 +72,49 @@ def start(context: mostrash.Context):
             match event.type:
                 case pygame.QUIT: running.set(False)
 
-        window.fill(mostrash.BLACK)
+        mouse_pos = mostrash.get_mouse_pos()
 
-        mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
-        mouse_down = pygame.mouse.get_pressed()[0]
+        escolha: bool | None = None
 
+        #Checka pelos Inputs do usuário.
         if mostrash.has_key_pressed("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
         if mostrash.has_mouse_released(1):
             for button in buttons:
-                if button.has_point(mostrash.get_mouse_pos()):
-                    resultado = button.run_callback()
-                    if isinstance(resultado, bool):
-                        escolha = resultado
-                        escolha_texto.set_text(str(escolha)).set_color(mostrash.color_from_bool(escolha))
+                if button.has_point(mouse_pos):
+                    escolha = button.run_callback()
 
-        #Desenha os objetos.
+        if escolha is not None:
+            if escolha: tentativa += 1
+            else:
+                vida -= 1
+                vida_texto.set_text(str(vida))
+
+            mosquito_index = rolar_mosquito(len(mosquitos))
+            escolha = None
+
+        print(vida)
+
+        if vida <= 0:
+            sucesso = False
+            running = False
+            continue
+
+        if tentativa >= 3:
+            sucesso = True
+            running = False
+            continue
+
+        #Apartir daqui está as funções para desenhar na janela.
+        window.fill(mostrash.BLACK)
+
         for text in textos:
             camera.draw(text)
         for button in buttons:
             camera.draw(button)
 
+        camera.draw(mosquitos[mosquito_index].image)
+
         pygame.display.flip()
         clock.tick(60)
-
-    sucesso = escolha == dengue_certa
 
     return sucesso

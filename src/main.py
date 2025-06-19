@@ -71,8 +71,8 @@ while running:
             if obj.has_point(mouse_pos) and mostrash.has_mouse_released(1):
                 sucesso = obj.run_callback()
                 sucesso_img = None
-                if not sucesso: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("carinha_triste"))
-                else: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))
+                if not sucesso: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("sucesso_falso"))
+                else: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("sucesso_verdade"))
 
                 sucesso_img.add(games_buttons)
 

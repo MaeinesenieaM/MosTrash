@@ -61,6 +61,9 @@ class IntRef(Reference):
     def as_str(self) -> str:
         return str(self.value)
 
+    def __int__(self):
+        return self.value
+
 class FloatRef(Reference):
     def __init__(self, value: float):
         self.value = value
@@ -78,3 +81,6 @@ class FloatRef(Reference):
 
     def as_str(self) -> str:
         return str(self.value)
+
+    def __float__(self):
+        return self.value
