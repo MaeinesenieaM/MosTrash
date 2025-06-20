@@ -44,14 +44,18 @@ def start(context: mostrash.Context):
     mosquito_index = 0
 
     mosquitos: list[Mosquito] = [
-        Mosquito(True, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))),
-        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_triste")))
+        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))),
+        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_triste"))),
+        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("sol"))),
+        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("touhou"))),
+        Mosquito(True, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("dengue")))
+
     ]
 
     #escolha_texto = mostrash.Label(CPoint(0.0, -0.5), str(escolha), size = 16, color = mostrash.color_from_bool(sucesso))
     #escolha_texto.add(textos)
 
-    mostrash.Label(CPoint(0.0, -0.70), "Isso é o mosquito dengue?", size = 32).add(textos)
+    mostrash.Label(CPoint(0.0, -0.25), "Isso é o mosquito dengue?", size = 32).add(textos)
 
     mostrash.Button(
         CPoint(-0.5, -0.5),
@@ -94,11 +98,19 @@ def start(context: mostrash.Context):
                 mostrash.create_timer(
                     500,
                     clock,
-                    end = lambda: correto.kill()
+                    end = lambda: miscs.empty()
                 )
 
             else:
                 vida -= 1
+                errado = Bitmap(CPoint(0.0, 0.0), assets.get_image_path("sucesso_falso"))
+                errado.add(miscs)
+                mostrash.create_timer(
+                    500,
+                    clock,
+                    end = lambda: miscs.empty()
+                )
+
 
             mosquito_index = rolar_mosquito(len(mosquitos))
             escolha = None
@@ -108,13 +120,15 @@ def start(context: mostrash.Context):
             running = False
             continue
 
-        if tentativa >= 3:
+        if tentativa >= 8:
             sucesso = True
             running = False
             continue
 
         #Apartir daqui está as funções para desenhar na janela.
         window.fill(mostrash.BLACK)
+
+        camera.draw(mosquitos[mosquito_index].image)
 
         for sprite in vida.get_sprites():
             camera.draw(sprite)
@@ -125,7 +139,7 @@ def start(context: mostrash.Context):
         for misc in miscs:
             camera.draw(misc)
 
-        camera.draw(mosquitos[mosquito_index].image)
+
 
         pygame.display.flip()
         clock.tick(60)
