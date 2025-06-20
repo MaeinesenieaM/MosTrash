@@ -74,6 +74,11 @@ while running:
                 else: sucesso_img = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("sucesso_verdade"))
 
                 sucesso_img.add(games_buttons)
+                mostrash.create_timer(
+                    500,
+                    clock,
+                    end = lambda: sucesso_img.kill()
+                )
 
         camera.draw(obj)
 

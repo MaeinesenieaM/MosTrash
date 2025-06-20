@@ -2,14 +2,13 @@ from os import PathLike
 
 import pygame
 import src.mostrash as mostrash
+from src.defs.objects import Bitmap
 from src.mostrash import CPoint, RPoint, Position
 from src.mostrash import IntRef, FloatRef, BoolRef
 
 import random
 
 #Basicamente um Papers Please de mosquito simples, só que nenhum mosquito será perdoado.
-def rolar_mosquito(largura: int):
-    return random.randint(0, largura - 1)
 
 class Mosquito:
     def __init__(self, real: bool, image: mostrash.Bitmap | None = None):
@@ -20,8 +19,8 @@ class Mosquito:
         return self.image
 
 #Eu sei que as funções abaixo são preguiçosas, mas eu real não tenho tempo.
-def mosquito_cheque(mosquito: list, estado: bool):
-    return mosquito[1] is estado
+def rolar_mosquito(largura: int):
+    return random.randint(0, largura - 1)
 
 def start(context: mostrash.Context):
     window = context.get_window()
@@ -31,6 +30,7 @@ def start(context: mostrash.Context):
 
     textos = pygame.sprite.Group()
     buttons = pygame.sprite.Group()
+    miscs = pygame.sprite.Group()
 
     sucesso = False
 
@@ -38,7 +38,8 @@ def start(context: mostrash.Context):
         CPoint(-0.8, 0.8),
         CPoint(0.15, 0),
         5,
-        assets.get_image_path("heart"))
+        assets.get_image_path("heart")
+    )
     tentativa = 0
     mosquito_index = 0
 
@@ -86,8 +87,18 @@ def start(context: mostrash.Context):
                     escolha = button.run_callback()
 
         if escolha is not None:
-            if escolha: tentativa += 1
-            else: vida -= 1
+            if escolha: #Caso tenha feito a decisão certa
+                tentativa += 1
+                correto = Bitmap(CPoint(0.0, 0.0), assets.get_image_path("sucesso_verdade"))
+                correto.add(miscs)
+                mostrash.create_timer(
+                    500,
+                    clock,
+                    end = lambda: correto.kill()
+                )
+
+            else:
+                vida -= 1
 
             mosquito_index = rolar_mosquito(len(mosquitos))
             escolha = None
@@ -111,6 +122,8 @@ def start(context: mostrash.Context):
             camera.draw(text)
         for button in buttons:
             camera.draw(button)
+        for misc in miscs:
+            camera.draw(misc)
 
         camera.draw(mosquitos[mosquito_index].image)
 
