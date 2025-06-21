@@ -3,24 +3,25 @@ import os
 class Assets:
     def __init__(self):
         self._assets = _load_assets()
+        self._missing_texture = _get_missing_texture()
 
-    def get_sound_path(self, name: str) -> os.PathLike | None:
+    def get_sound_path(self, name: str) -> os.PathLike:
         """Caso encontre o som em assets, retorna o caminho do arquivo,
         caso contrario retornara None."""
         name = name.lower()
-        if not name in self._assets["sounds"]: return None
+        if not name in self._assets["sounds"]: return self._missing_texture
         return self._assets["sounds"][name]["path"]
 
-    def get_image_path(self, name: str) -> os.PathLike | None:
+    def get_image_path(self, name: str) -> os.PathLike:
         """Caso encontre a imagem em assets, retorna o caminho do arquivo,
         caso contrario retornara None."""
         name = name.lower()
-        if not name in self._assets["images"]: return None
+        if not name in self._assets["images"]: return self._missing_texture
         return self._assets["images"][name]["path"]
 
     def get_font_path(self, name: str) -> os.PathLike | None:
         name = name.lower()
-        if not name in self._assets["fonts"]: return None
+        if not name in self._assets["fonts"]: return self._missing_texture
         return self._assets["fonts"][name]["path"]
 
 def _load_assets():
@@ -55,3 +56,6 @@ def _load_assets():
         assets["fonts"][name] = {"path": path}
 
     return assets
+
+def _get_missing_texture() -> str | bytes | os.PathLike:
+    return os.path.join(os.path.dirname(__file__), "assets", "images", "missing_texture.png")

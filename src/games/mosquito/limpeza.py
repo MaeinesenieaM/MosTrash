@@ -52,24 +52,26 @@ def start(context: mostrash.Context):
     camera = context.get_camera()
     assets = context.get_assets()
 
+    background = mostrash.Bitmap(mostrash.CPoint(), assets.get_image_path("limpeza_scene"))
+
     lixos = pygame.sprite.Group()
 
     Lixo(
         mostrash.Position(60, 60),
-        assets.get_image_path("balde_sujo"),
-        assets.get_image_path("balde_limpo")
+        assets.get_image_path("balde_verde_sujo"),
+        assets.get_image_path("balde_azul_limpo")
     ).add(lixos)
 
     Lixo(
         mostrash.Position(-90, 20),
-        assets.get_image_path("garrafa_sujo"),
-        assets.get_image_path("garrafa_limpo")
+        assets.get_image_path("garrafa_vermelho_sujo"),
+        assets.get_image_path("garrafa_azul_limpo")
     ).add(lixos)
 
     Lixo(
-        mostrash.Position(0, -40),
-        assets.get_image_path("flor_sujo"),
-        assets.get_image_path("flor_limpo")
+        mostrash.Position(0, 85),
+        assets.get_image_path("eorr"),
+        assets.get_image_path("flor_azul_limpo")
     ).add(lixos)
 
     running = True
@@ -84,6 +86,7 @@ def start(context: mostrash.Context):
                 if lixo.has_point(mostrash.get_mouse_pos()): lixo.clean()
 
         window.fill(mostrash.BLACK)
+        camera.draw(background)
 
         for lixo in lixos:
             camera.draw(lixo.get_image())
