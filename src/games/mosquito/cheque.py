@@ -130,7 +130,7 @@ def start(context: mostrash.Context):
         #Apartir daqui está as funções para desenhar na janela.
         window.fill(mostrash.BLACK)
 
-        camera.draw(background)
+        #camera.draw(background)
         camera.draw(mosquitos[mosquito_index].image)
 
         for sprite in vida.get_sprites():
