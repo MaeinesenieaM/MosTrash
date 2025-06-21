@@ -32,6 +32,7 @@ def start(context: mostrash.Context):
 
     textos = pygame.sprite.Group()
     buttons = pygame.sprite.Group()
+    sucesso_img = pygame.sprite.Group()
     miscs = pygame.sprite.Group()
 
     sucesso = False
@@ -43,13 +44,21 @@ def start(context: mostrash.Context):
         assets.get_image_path("heart")
     )
     tentativa = 0
+    tentativa_final = 5
     mosquito_index = 0
+
+    objetivo = mostrash.Label(
+        mostrash.CPoint(0.0, 0.85),
+        f"{tentativa}/{tentativa_final}",
+        size = 32,
+        color = mostrash.YELLOW
+    )
+    objetivo.add(miscs)
 
     mosquitos: list[Mosquito] = [
         Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_feliz"))),
         Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("carinha_triste"))),
         Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("sol"))),
-        Mosquito(False, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("touhou"))),
         Mosquito(True, mostrash.Bitmap(Position(0.0, 0.0), assets.get_image_path("dengue")))
 
     ]
@@ -96,33 +105,36 @@ def start(context: mostrash.Context):
             if escolha: #Caso tenha feito a decisão certa
                 tentativa += 1
                 correto = Bitmap(CPoint(0.0, 0.0), assets.get_image_path("sucesso_verdade"))
-                correto.add(miscs)
+                correto.add(sucesso_img)
                 mostrash.create_timer(
                     500,
                     clock,
-                    end = lambda: miscs.empty()
+                    end = lambda: sucesso_img.empty()
                 )
 
             else:
                 vida -= 1
+                tentativa = max(0, tentativa - 1) #Para não virar negativo.
                 errado = Bitmap(CPoint(0.0, 0.0), assets.get_image_path("sucesso_falso"))
-                errado.add(miscs)
+                errado.add(sucesso_img)
                 mostrash.create_timer(
                     500,
                     clock,
-                    end = lambda: miscs.empty()
+                    end = lambda: sucesso_img.empty()
                 )
 
 
             mosquito_index = rolar_mosquito(len(mosquitos))
             escolha = None
 
+        objetivo.set_text(f"{tentativa}/{tentativa_final}")
+
         if vida <= 0:
             sucesso = False
             running = False
             continue
 
-        if tentativa >= 8:
+        if tentativa >= tentativa_final:
             sucesso = True
             running = False
             continue
@@ -139,6 +151,8 @@ def start(context: mostrash.Context):
             camera.draw(text)
         for button in buttons:
             camera.draw(button)
+        for sucesso in sucesso_img:
+            camera.draw(sucesso)
         for misc in miscs:
             camera.draw(misc)
 

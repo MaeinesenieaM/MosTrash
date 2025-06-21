@@ -15,9 +15,6 @@ assets = context.get_assets()
 
 games = mostrash.Games()
 
-image = mostrash.Bitmap(mostrash.Position(0.0, 0.0), assets.get_image_path("boom"))
-contagem = mostrash.Label(mostrash.CPoint(0.0, 0.9), "funciona!", size = 32, color = mostrash.WHITE)
-
 #mostrash.play_sound(assets.get_sound_path("explosion"))
 
 count = 0
@@ -58,12 +55,6 @@ while running:
 
     mouse_pos = mostrash.to_position(pygame.mouse.get_pos())
     mouse_down = pygame.mouse.get_pressed()[0]
-    count += 1
-
-    contagem.set_text(str(count))
-
-    camera.draw(image) #Desenha a imagem
-    camera.draw(contagem) #Desenha o Texto
 
     for obj in games_buttons.sprites():
         if isinstance(obj, mostrash.Button):

@@ -4,7 +4,6 @@ import src.mostrash as mostrash
 
 from os import PathLike
 
-
 #Aki será um minigame de limpeza onde vão ter várias cenas que o jogar precisa limpar antes que o tempo acabe.
 class Lixo(pygame.sprite.Sprite):
     def __init__(
@@ -110,6 +109,13 @@ def start(context: mostrash.Context):
 
     miscs = pygame.sprite.Group()
 
+    objetivo = mostrash.Label(
+        mostrash.CPoint(0.0, 0.85),
+        f"?/{len(lixos)}",
+        size = 32,
+        color = mostrash.YELLOW
+    )
+
     running = mostrash.BoolRef(True)
     while running:
         for event in mostrash.pull_events():
@@ -122,6 +128,7 @@ def start(context: mostrash.Context):
                 if lixo.has_point(mostrash.get_mouse_pos()): lixo.clean()
 
         clean_quantity = sum(1 for lixo in lixos if lixo.is_dirty())
+        objetivo.set_text(f"{len(lixos) - clean_quantity}/{len(lixos)}")
 
         if clean_quantity == 0:
             sucesso = mostrash.Bitmap(mostrash.CPoint(), assets.get_image_path("sucesso_verdade"))
@@ -144,6 +151,8 @@ def start(context: mostrash.Context):
             camera.draw(lixo.get_image())
         for misc in miscs:
             camera.draw(misc)
+
+        camera.draw(objetivo)
 
         pygame.display.flip()
         clock.tick(60)
