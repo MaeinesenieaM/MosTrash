@@ -21,12 +21,15 @@ class Lixo(pygame.sprite.Sprite):
 
         self.button = mostrash.Button(
             self.pos,
-            self.dirty_image.get_biggest_side(),
+            self.dirty_image.get_smallest_side(),
             lambda: self.set_dirty(False)
         )
 
     def set_dirty(self, dirty: bool):
         self.dirty = dirty
+
+    def is_dirty(self) -> bool:
+        return self.dirty
 
     def clean(self):
         self.button.run_callback()
@@ -46,6 +49,54 @@ def random_cpoint() -> mostrash.CPoint:
     y = -1.0 + 2 * random.random()
     return mostrash.CPoint(x, y)
 
+def set_trash(trash_group: pygame.sprite.Group, assets: mostrash.Assets):
+    Lixo(
+        mostrash.Position(-120, 85),
+        assets.get_image_path("flor_vermelho_sujo"),
+        assets.get_image_path("flor_vermelho_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(0, 80),
+        assets.get_image_path("flor_azul_sujo"),
+        assets.get_image_path("flor_azul_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(124, 83),
+        assets.get_image_path("flor_amarelo_sujo"),
+        assets.get_image_path("flor_amarelo_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(-260, -190),
+        assets.get_image_path("balde_roxo_sujo"),
+        assets.get_image_path("balde_roxo_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(-172, -195),
+        assets.get_image_path("balde_azul_sujo"),
+        assets.get_image_path("balde_azul_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(-83, -187),
+        assets.get_image_path("balde_verde_sujo"),
+        assets.get_image_path("balde_verde_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(90, -200),
+        assets.get_image_path("garrafa_vermelho_sujo"),
+        assets.get_image_path("garrafa_vermelho_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(175, -210),
+        assets.get_image_path("garrafa_verde_sujo"),
+        assets.get_image_path("garrafa_verde_limpo")
+    ).add(trash_group)
+    Lixo(
+        mostrash.Position(255, -205),
+        assets.get_image_path("garrafa_azul_sujo"),
+        assets.get_image_path("garrafa_azul_limpo")
+    ).add(trash_group)
+
+
 def start(context: mostrash.Context):
     window = context.get_window()
     clock = context.get_clock()
@@ -55,26 +106,11 @@ def start(context: mostrash.Context):
     background = mostrash.Bitmap(mostrash.CPoint(), assets.get_image_path("limpeza_scene"))
 
     lixos = pygame.sprite.Group()
+    set_trash(lixos, assets)
 
-    Lixo(
-        mostrash.Position(60, 60),
-        assets.get_image_path("balde_verde_sujo"),
-        assets.get_image_path("balde_azul_limpo")
-    ).add(lixos)
+    miscs = pygame.sprite.Group()
 
-    Lixo(
-        mostrash.Position(-90, 20),
-        assets.get_image_path("garrafa_vermelho_sujo"),
-        assets.get_image_path("garrafa_azul_limpo")
-    ).add(lixos)
-
-    Lixo(
-        mostrash.Position(0, 85),
-        assets.get_image_path("eorr"),
-        assets.get_image_path("flor_azul_limpo")
-    ).add(lixos)
-
-    running = True
+    running = mostrash.BoolRef(True)
     while running:
         for event in mostrash.pull_events():
             match event.type:
@@ -85,11 +121,29 @@ def start(context: mostrash.Context):
             for lixo in lixos:
                 if lixo.has_point(mostrash.get_mouse_pos()): lixo.clean()
 
+        clean_quantity = sum(1 for lixo in lixos if lixo.is_dirty())
+
+        if clean_quantity == 0:
+            sucesso = mostrash.Bitmap(mostrash.CPoint(), assets.get_image_path("sucesso_verdade"))
+            sucesso.add(miscs)
+
+            def end_game():
+                sucesso.kill()
+                running.toggle()
+
+            mostrash.create_timer(
+                1500,
+                clock,
+                end = end_game
+            )
+
         window.fill(mostrash.BLACK)
         camera.draw(background)
 
         for lixo in lixos:
             camera.draw(lixo.get_image())
+        for misc in miscs:
+            camera.draw(misc)
 
         pygame.display.flip()
         clock.tick(60)

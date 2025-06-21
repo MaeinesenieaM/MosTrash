@@ -37,6 +37,13 @@ class Bitmap(Entity, pygame.sprite.Sprite):
         if width > height: return width
         else: return height
 
+    def get_smallest_side(self) -> int:
+        width = self.image.get_width()
+        height = self.image.get_height()
+        if width < height: return width
+        else: return height
+
+
 class BitmapChain:
     from os import PathLike
 
