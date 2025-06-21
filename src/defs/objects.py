@@ -1,3 +1,5 @@
+from os import PathLike
+
 from src.defs.points import *
 from src.defs.colors import *
 from src.assets import Assets
@@ -28,6 +30,12 @@ class Bitmap(Entity, pygame.sprite.Sprite):
 
     def set_image(self, image_path: PathLike):
         self.image = pygame.image.load(image_path).convert_alpha()
+
+    def get_biggest_side(self) -> int:
+        width = self.image.get_width()
+        height = self.image.get_height()
+        if width > height: return width
+        else: return height
 
 class BitmapChain:
     from os import PathLike
@@ -200,7 +208,7 @@ class Button(Entity, pygame.sprite.Sprite):
         size: float | int,
         callback: Callable[..., any] = None,
         color = GRAY,
-        bitmap: Bitmap = None
+        image_path: PathLike = None
     ):
         from collections.abc import Callable
         pygame.sprite.Sprite.__init__(self)
@@ -212,7 +220,12 @@ class Button(Entity, pygame.sprite.Sprite):
         self.pos = pos
         self.size = float(size)
         self.color = color
-        self.bitmap = bitmap
+
+        if image_path:
+            self.bitmap = Bitmap(self.pos, image_path)
+        else:
+            self.bitmap = None
+
         self._callback: Callable[[], any] | None = callback
 
     def set_callback(self, callback: Callable[[], any]):
@@ -223,7 +236,10 @@ class Button(Entity, pygame.sprite.Sprite):
     def run_callback(self) -> any:
         """Caso o botão tenha uma função guardada, ira chamá-la e retornar seu resultado."""
         if self._callback: return self._callback()
-        
+
+    def set_image(self, image_path: PathLike):
+        self.bitmap = Bitmap(self.pos, image_path)
+
     def has_point(self, pos: Position | RPoint | CPoint) -> bool:
         """Verifica se um ponto está dentro do botão."""
         if isinstance(pos, CPoint) or isinstance(pos, RPoint):

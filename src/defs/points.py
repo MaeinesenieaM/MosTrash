@@ -1,10 +1,6 @@
 import pygame
 
 class Point:
-    def __init__(self):
-        self.x = None
-        self.y = None
-
     # +=
     def __iadd__(self, other):
         self.x += other.x
@@ -49,7 +45,7 @@ class RPoint(Point):
     (0, 0) seria o canto superior esquerdo da tela neste caso.
     """
     def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
-        Point.__init__(self)
+        #Point.__init__(self)
         self.x = float(x)
         self.y = float(y)
 
@@ -107,7 +103,7 @@ class CPoint(Point):
     (1.0, 0.0) seria o centro do canto direito da tela.
     """
     def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
-        Point.__init__(self)
+        #Point.__init__(self)
         x = float(x)
         y = float(y)
         self.x = ((x + 1) % 2) - 1 #Formula complicada para limitar o valor entre -1,0 e 1,0.
@@ -182,7 +178,7 @@ class Position(Point):
     Normalmente usado em conjunto com a camera.
     """
     def __init__(self, x: float | int = 0.0, y: float | int = 0.0):
-        Point.__init__(self)
+        #Point.__init__(self)
         self.x = float(x)
         self.y = float(y)
 

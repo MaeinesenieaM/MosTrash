@@ -28,6 +28,8 @@ def start(context: mostrash.Context):
     camera = context.get_camera()
     assets = context.get_assets()
 
+    #background = mostrash.Bitmap(CPoint(), assets.get_image_path("background"))
+
     textos = pygame.sprite.Group()
     buttons = pygame.sprite.Group()
     miscs = pygame.sprite.Group()
@@ -128,6 +130,7 @@ def start(context: mostrash.Context):
         #Apartir daqui está as funções para desenhar na janela.
         window.fill(mostrash.BLACK)
 
+        camera.draw(background)
         camera.draw(mosquitos[mosquito_index].image)
 
         for sprite in vida.get_sprites():
