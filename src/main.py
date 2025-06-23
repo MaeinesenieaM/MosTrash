@@ -3,8 +3,6 @@ import pygame
 
 from src.defs.points import CPoint
 
-#A partir daqui é o código da demonstração.
-
 #Inicia mostrash
 context: mostrash.Context = mostrash.init(700, 600)
 
@@ -14,8 +12,6 @@ camera = context.get_camera()
 assets = context.get_assets()
 
 games = mostrash.Games()
-
-#mostrash.play_sound(assets.get_sound_path("explosion"))
 
 count = 0
 running = True
@@ -77,7 +73,6 @@ while running:
 
     if mostrash.has_key_released("escape"): pygame.event.post(mostrash.get_event(pygame.QUIT))
 
-    #camera.pos.y += 0.005
     pygame.display.flip()
     clock.tick(60)
 

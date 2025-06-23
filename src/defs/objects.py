@@ -45,6 +45,11 @@ class Bitmap(Entity, pygame.sprite.Sprite):
 
 
 class BitmapChain:
+    """
+    Esta classe tem a propriedade de guardar múltiplos Bitmaps e carregados em uma corrente.
+    Para utilizar a classe, use ela como se fosse um valor qualquer. Se fizer bitmapchain + 1,
+    um Bitmap será acrescentado conforme o offset.
+    """
     from os import PathLike
 
     def __init__(
@@ -112,6 +117,9 @@ class BitmapChain:
         return self.quantity >= other
 
 class Label(Position, Entity, pygame.sprite.Sprite):
+    """
+    Esta classe tem o simples propósito de guardar textos e suas cores.
+    """
     from os import PathLike
     from pygame import Color
 

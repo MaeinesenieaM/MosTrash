@@ -97,17 +97,19 @@ def set_trash(trash_group: pygame.sprite.Group, assets: mostrash.Assets):
 
 
 def start(context: mostrash.Context):
+    #Extração de informação do contexto
     window = context.get_window()
     clock = context.get_clock()
     camera = context.get_camera()
     assets = context.get_assets()
 
+    #Carregando a imagem de fundo.
     background = mostrash.Bitmap(mostrash.CPoint(), assets.get_image_path("limpeza_scene"))
 
+    #Definição de grupos
     lixos = pygame.sprite.Group()
-    set_trash(lixos, assets)
-
     miscs = pygame.sprite.Group()
+    set_trash(lixos, assets)
 
     objetivo = mostrash.Label(
         mostrash.CPoint(0.0, 0.85),
@@ -130,6 +132,7 @@ def start(context: mostrash.Context):
         clean_quantity = sum(1 for lixo in lixos if lixo.is_dirty())
         objetivo.set_text(f"{len(lixos) - clean_quantity}/{len(lixos)}")
 
+        #Se todos os lixos do jogo foram limpos.
         if clean_quantity == 0:
             sucesso = mostrash.Bitmap(mostrash.CPoint(), assets.get_image_path("sucesso_verdade"))
             sucesso.add(miscs)
@@ -138,12 +141,14 @@ def start(context: mostrash.Context):
                 sucesso.kill()
                 running.toggle()
 
+            #Esse timer está aki para dar um delay no fim do jogo, assim que ele acabar, o jogo termina.
             mostrash.create_timer(
                 1500,
                 clock,
                 end = end_game
             )
 
+        #Logica para desenhar na tela.
         window.fill(mostrash.BLACK)
         camera.draw(background)
 
