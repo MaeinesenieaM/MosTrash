@@ -1,6 +1,6 @@
 import pygame
 import random
-import src.mostrash as mostrash
+import mostrash as mostrash
 
 from os import PathLike
 

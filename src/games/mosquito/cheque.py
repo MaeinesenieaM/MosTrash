@@ -1,10 +1,10 @@
 from os import PathLike
 
 import pygame
-import src.mostrash as mostrash
-from src.defs.objects import Bitmap
-from src.mostrash import CPoint, RPoint, Position
-from src.mostrash import IntRef, FloatRef, BoolRef
+import mostrash as mostrash
+from defs.objects import Bitmap
+from mostrash import CPoint, RPoint, Position
+from mostrash import IntRef, FloatRef, BoolRef
 
 import random
 

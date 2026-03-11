@@ -1,5 +1,5 @@
 import pygame
-import src.mostrash as mostrash
+import mostrash as mostrash
 
 def start(context: mostrash.Context):
     window = context.get_window()

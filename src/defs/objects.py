@@ -1,8 +1,8 @@
 from os import PathLike
 
-from src.defs.points import *
-from src.defs.colors import *
-from src.assets import Assets
+from defs.points import *
+from defs.colors import *
+from assets import Assets
 
 class Entity:
     """EM PROGRESSO!

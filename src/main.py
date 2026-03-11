@@ -1,7 +1,7 @@
 import mostrash
 import pygame
 
-from src.defs.points import CPoint
+from defs.points import CPoint
 
 #Inicia mostrash
 context: mostrash.Context = mostrash.init(700, 600)

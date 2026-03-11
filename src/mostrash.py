@@ -1,11 +1,11 @@
 import importlib.util
 
-from src.defs.objects import *
-from src.defs.points import *
-from src.defs.events import *
-from src.defs.colors import *
-from src.defs.references import *
-from src.assets import *
+from defs.objects import *
+from defs.points import *
+from defs.events import *
+from defs.colors import *
+from defs.references import *
+from assets import *
 
 from typing import Callable
 
